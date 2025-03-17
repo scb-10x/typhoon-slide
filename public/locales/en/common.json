@@ -1,0 +1,51 @@
+{
+  "app": {
+    "title": "Typhoon Slide",
+    "description": "Create beautiful slide decks in minutes with Typhoon Slide's AI assistance",
+    "openApp": "Open App"
+  },
+  "hero": {
+    "title": "Create beautiful slides with AI",
+    "subtitle": "Typhoon Slide turns your ideas into professional presentations in seconds",
+    "getStarted": "Get Started"
+  },
+  "features": {
+    "title": "Features",
+    "markdown": "Write slides in Markdown",
+    "separateSlides": "Use \"---\" to separate slides",
+    "formatting": "Supports **bold**, *italic*, and more!"
+  },
+  "usage": {
+    "title": "How to Use",
+    "step1": "Edit the markdown on the right",
+    "step2": "See the slides preview on the left",
+    "step3": "Use the AI chat to generate content"
+  },
+  "conclusion": {
+    "title": "That's It!",
+    "startCreating": "Start creating your slides now!"
+  },
+  "navigation": {
+    "language": "Language"
+  },
+  "editor": {
+    "download": "Download",
+    "editSlides": "Edit Slides",
+    "presentationPreview": "Presentation Preview",
+    "slides": "slides",
+    "editingMarkdown": "Editing Markdown",
+    "changesAutosaved": "Changes are saved automatically",
+    "tryTyphoonSlide": "Try Typhoon Slide",
+    "makeSlides": "Make slides in minutes",
+    "emptySlideMessage": "Your slides will appear here. Start by writing in the editor or asking the AI to create content for you.",
+    "openEditor": "Open Editor"
+  },
+  "footer": {
+    "builtWith": "Built with Typhoon"
+  },
+  "callToAction": {
+    "title": "Create Beautiful Slides in Minutes",
+    "subtitle": "Typhoon Slide helps you create professional presentations faster than ever before.",
+    "startCreating": "Start Creating"
+  }
+} 
