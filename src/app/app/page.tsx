@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -44,6 +44,7 @@ Start creating your slides now!
 `;
 
 export default function Home() {
+  const [currentSlide, setCurrentSlide] = useState(0);
   const [markdown, setMarkdown] = useState('');
   const [compiledSlides, setCompiledSlides] = useState<React.ReactNode[]>([]);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
@@ -62,6 +63,13 @@ export default function Home() {
       setMarkdown(defaultMarkdown);
     }
   }, []);
+
+  const slides = useMemo(() => {
+    return markdown
+      .split('---')
+      .map(slide => slide.trim())
+      .filter(Boolean);
+  }, [markdown]);
 
   const handleMarkdownChange = (value: string) => {
     setMarkdown(value);
@@ -85,11 +93,32 @@ export default function Home() {
     handleMarkdownChange(newMarkdown); // Use handleMarkdownChange to ensure localStorage is updated
   };
 
-  // Function to replace the current (last) slide with new content
-  const handleReplaceCurrentSlide = (content: string) => {
-    console.log("Replacing current slide with new content");
+  // Function to replace all slides with new content
+  const handleReplaceAllSlides = (content: string) => {
+    console.log("Replacing all slides with new content");
     // Update the state with the new content
     handleMarkdownChange(content);
+  };
+
+  // Function to replace only the current slide with new content
+  const handleReplaceThisSlide = (content: string) => {
+    console.log("Replacing only current slide with new content");
+    
+    if (slides.length === 0) {
+      // If there are no slides, just set the content as the first slide
+      handleMarkdownChange(content);
+      return;
+    }
+    
+    // Create a new array of slides with the current slide replaced
+    const newSlides = [...slides];
+    newSlides[currentSlide] = content;
+    
+    // Join the slides back together with separators
+    const newMarkdown = newSlides.join('\n\n---\n\n');
+    
+    // Update the markdown
+    handleMarkdownChange(newMarkdown);
   };
 
   const toggleEditor = () => {
@@ -104,15 +133,13 @@ export default function Home() {
 
   // Get current markdown content for context passing to AIChat
   const getCurrentSlideContext = () => {
-    if (!markdown.trim()) {
+    if(slides.length === 0) {
       return "No slides created yet.";
     }
+    const currentSlideContent = slides[currentSlide].trim();
+    console.log('currentSlideContent', slides, currentSlide, currentSlideContent)
     
-    // Get the last slide content for context
-    const slides = markdown.split('---');
-    const lastSlide = slides[slides.length - 1].trim();
-    
-    return `Current slide content:\n${lastSlide || "Empty slide"}`;
+    return `Current slide content:\n${currentSlideContent || "Empty slide"}`;
   };
 
   // This function processes the markdown into slides for the preview
@@ -125,13 +152,10 @@ export default function Home() {
 
       try {
         // Split the markdown by slide separators
-        const slideContents = markdown
-          .split('---')
-          .map(slide => slide.trim())
-          .filter(Boolean);
+        
 
         // Compile each slide with MDX
-        const compiledSlidePromises = slideContents.map(async (slideContent) => {
+        const compiledSlidePromises = slides.map(async (slideContent) => {
           try {
             // Compile the MDX with our custom components
             const { content } = await compileMDX({
@@ -165,7 +189,8 @@ export default function Home() {
     // Debounce the rendering to avoid excessive compilations
     const timeoutId = setTimeout(renderMarkdown, 500);
     return () => clearTimeout(timeoutId);
-  }, [markdown, mdxComponents]); // Include mdxComponents in dependencies
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [markdown]);
 
   const downloadMdxFile = () => {
     try {
@@ -275,7 +300,7 @@ export default function Home() {
                 <div className={`${isFullScreen ? 'h-screen w-screen' : 'h-full'} bg-white dark:bg-gray-800 ${isFullScreen ? '' : 'rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-inner'}`}>
                   {compiledSlides.length > 0 ? (
                     <div className={`relative ${isFullScreen ? 'h-screen w-screen' : 'h-full'}`}>
-                      <SlideShow slides={compiledSlides} />
+                      <SlideShow slides={compiledSlides} setCurrentSlide={(e) => setCurrentSlide(e)} currentSlide={currentSlide} />
                       {isFullScreen && (
                         <button 
                           onClick={toggleFullScreen}
@@ -330,7 +355,8 @@ export default function Home() {
               <div className="flex-1 bg-white dark:bg-gray-900 overflow-hidden min-h-0">
                 <AIChat 
                   onInsertMarkdown={handleAIContentInsert} 
-                  onReplaceSlide={handleReplaceCurrentSlide}
+                  onReplaceSlide={handleReplaceThisSlide}
+                  onReplaceAllSlides={handleReplaceAllSlides}
                   currentSlideContext={getCurrentSlideContext()} 
                 />
               </div>

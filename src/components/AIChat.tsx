@@ -12,10 +12,11 @@ interface Message {
 interface AIChatProps {
   onInsertMarkdown: (markdown: string) => void;
   onReplaceSlide: (markdown: string) => void;
+  onReplaceAllSlides: (markdown: string) => void;
   currentSlideContext?: string;
 }
 
-export default function AIChat({ onInsertMarkdown, onReplaceSlide, currentSlideContext }: AIChatProps) {
+export default function AIChat({ onInsertMarkdown, onReplaceSlide, onReplaceAllSlides, currentSlideContext }: AIChatProps) {
   const [messages, setMessages] = useState<Message[]>([
     { 
       role: 'assistant', 
@@ -182,7 +183,7 @@ export default function AIChat({ onInsertMarkdown, onReplaceSlide, currentSlideC
 
   const replaceCurrentSlide = (content: string) => {
     // Add console log to debug
-    console.log("AIChat: Replace slide button clicked");
+    console.log("AIChat: Replace this slide button clicked");
     console.log("AIChat: Content to replace current slide:", content);
     
     // Make sure we're not inserting empty content
@@ -265,7 +266,16 @@ export default function AIChat({ onInsertMarkdown, onReplaceSlide, currentSlideC
                     whileHover={{ scale: 1.03 }}
                     whileTap={{ scale: 0.97 }}
                   >
-                    <FiEdit className="mr-1.5" /> Replace current slide
+                    <FiEdit className="mr-1.5" /> Replace this slide
+                  </motion.button>
+
+                  <motion.button 
+                    onClick={() => onReplaceAllSlides(message.content)}
+                    className="flex items-center text-xs font-medium text-amber-500 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
+                    whileHover={{ scale: 1.03 }}
+                    whileTap={{ scale: 0.97 }}
+                  >
+                    <FiEdit className="mr-1.5" /> Replace all slides
                   </motion.button>
 
                   {/* Only show the regenerate button for the last AI message */}

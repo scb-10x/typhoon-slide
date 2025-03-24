@@ -10,10 +10,11 @@ import MDXSlide from './MDXSlide';
 
 interface SlideShowProps {
   slides: React.ReactNode[];
+  currentSlide: number;
+  setCurrentSlide: (slide: number) => void;
 }
 
-export default function SlideShow({ slides }: SlideShowProps) {
-  const [currentSlide, setCurrentSlide] = useState(0);
+export default function SlideShow({ slides, currentSlide, setCurrentSlide }: SlideShowProps) {
 
   const goToNextSlide = () => {
     if (currentSlide < slides.length - 1) {
