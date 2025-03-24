@@ -62,6 +62,25 @@ interface SlidePlan {
   overallNarrative: string;
 }
 
+// Status tracking interface for generation process
+interface GenerationStatus {
+  id: string;
+  status: 'understanding' | 'planning' | 'generating' | 'finalizing' | 'completed' | 'error';
+  progress: number; // 0-100
+  message: string;
+  result?: string;
+  error?: string;
+}
+
+// In-memory store for tracking generation status
+// In a production app, this would be a database or Redis
+const statusStore = new Map<string, GenerationStatus>();
+
+// Helper function to generate a unique ID
+function generateId(): string {
+  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+}
+
 // Step 1: Planning - determine content structure based on user persona and slide goal
 const createPlanningPrompt = (userPrompt: string, userPersona: string, slideGoal: string, slideConstraint: string, task: string, slideContext?: string) => {
   // For edit tasks, use a focused prompt for editing existing slides
@@ -223,6 +242,11 @@ Slide title: "${slide.slideTitle}"
 Key message: "${slide.keyMessage}"
 Content points: ${JSON.stringify(slide.content)}
 
+### General constraints:
+- No images, no tables
+- If a specific language is requested, the content should use natural expressions in that language, not direct translations
+
+
 ### Slide constraint:
 ${slideConstraint}
 
@@ -341,73 +365,85 @@ async function generateSlide(slidePlan: SlidePlan, slideNumber: number, userProm
   return cleanedCodeBlock(contentResult.text);
 }
 
-// Function to extract parameters from the user prompt
-async function extractParametersFromPrompt(userPrompt: string, slideContext?: string): Promise<{
+// Extract parameters from prompt using AI
+async function extractParametersFromPrompt(
+  generationId: string,
+  userPrompt: string, 
+  slideContext?: string
+): Promise<{
   userPersona: string;
   slideGoal: string;
   slideConstraint: string;
   task: string;
 }> {
+  // Update status
+  statusStore.set(generationId, {
+    id: generationId,
+    status: 'understanding',
+    progress: 5,
+    message: 'Analyzing your request...'
+  });
+
   const extractionPrompt = `
 ### Parameter Extraction Task
-I need you to analyze the following user prompt and slideContext for a slide presentation and extract key parameters.
+I need you to analyze a user's prompt for slide creation and identify the following key parameters:
 
-### Existing slide context:
-${slideContext}
+### User Prompt:
+"${userPrompt}"
+
+${slideContext ? `### Slide Context:\n${slideContext}` : ''}
 
 ### General constraints:
 - No images, no tables
 - If a specific language is requested, the content should use natural expressions in that language, not direct translations
 
-### User prompt:
-"${userPrompt}"
-
 ### Instructions:
-Extract the following information from the user prompt and general constraints:
-1. User Persona: Who is the target audience for this presentation? What kind of professionals are they?
-2. Slide Goal: What is the main objective of this presentation? (e.g., persuade, inform, entertain, sell)
-3. Slide Constraint: Are there any specific constraints mentioned? (e.g., language requirements, time limits, style preferences, no images, no tables)
-   - If a language constraint is identified, add that the content should "use natural expressions in that language that sound native, not direct translations"
-4. Task: Is the user requesting a new presentation or editing/refined an existing one?
+From the user prompt, extract the following parameters:
 
-If any of these parameters are not explicitly mentioned in the prompt, make a reasonable inference based on the content.
+1. User Persona: Who is the intended audience or presenter for these slides? (e.g., business executive, teacher, student, marketer)
+2. Slide Goal: What is the main purpose of these slides? (e.g., persuade, inform, educate, entertain)
+3. Slide Constraint: Are there any specific formatting, style, or content constraints? (e.g., "use dark colors", "include data visualization", "5 slides max")
+4. Task Type: Is this a "create" task for new slides or an "edit" task for existing slides?
 
-Return ONLY a JSON object with the following format:
+Your response should be a structured JSON object with the following format:
 {
-  "userPersona": "Description of the target audience",
-  "slideGoal": "Primary objective of the presentation",
-  "slideConstraint": "Any constraints that should be considered, including natural language usage for non-English content",
-  "task": "create|edit"
+  "userPersona": "extracted persona or 'General business professional' if not specified",
+  "slideGoal": "extracted goal or 'Inform and persuade' if not specified",
+  "slideConstraint": "extracted user constraints combined with general constraints",
+  "task": "create or edit"
 }
+
+If certain parameters aren't explicitly stated, use reasonable defaults based on context.
 `;
 
   const extractionResult = await generateText({
     model: typhoon(TYPHOON_MODEL),
     messages: [
-      { role: "system", content: SYSTEM_PROMPT },
+      { role: "system", content: "You are a helpful assistant that extracts structured information from text." },
       { role: "user", content: extractionPrompt },
     ],
-    temperature: 0.3,
+    temperature: 0.2,
   });
   
   try {
     const extractedParams = JSON.parse(cleanedCodeBlock(extractionResult.text));
-    console.log("Extracted parameters:", extractedParams);
-    return extractedParams;
-  } catch (parseError) {
-    console.error("Error parsing extracted parameters:", parseError);
-    // Return default values if parsing fails
+    
+    // Ensure the returned object has all the expected keys
     return {
-      userPersona: "",
-      slideGoal: "",
-      slideConstraint: "",
-      task: ""
+      userPersona: extractedParams.userPersona || "General business professional",
+      slideGoal: extractedParams.slideGoal || "Inform and persuade",
+      slideConstraint: extractedParams.slideConstraint || "No specific constraints",
+      task: extractedParams.task || "create",
     };
+  } catch (error) {
+    console.error("Error parsing parameter extraction JSON:", error);
+    throw new Error("Failed to extract parameters from prompt");
   }
 }
 
 // Function to run the complete three-step process
 async function runFullSlideGeneration(
+  generationId: string,
   userPrompt: string, 
   userPersona: string = "", 
   slideGoal: string = "",
@@ -415,11 +451,17 @@ async function runFullSlideGeneration(
   task: string = "",
   slideContext: string = ""
 ): Promise<string> {
+  // Update status to planning
+  statusStore.set(generationId, {
+    id: generationId,
+    status: 'planning',
+    progress: 15,
+    message: 'Planning presentation structure...'
+  });
+
   console.log("Step 1: Planning presentation structure...");
-  console.log('slideContext', slideContext)
   // Step 1: Create the plan
   const planningPrompt = createPlanningPrompt(userPrompt, userPersona, slideGoal, slideConstraint, task, slideContext);
-  console.log('planningPrompt', planningPrompt)
   const planResult = await generateText({
     model: typhoon(TYPHOON_MODEL),
     messages: [
@@ -435,8 +477,24 @@ async function runFullSlideGeneration(
     console.log(`Created plan with ${slidePlan.totalSlides} slides for "${slidePlan.title}"`);
   } catch (parseError) {
     console.error("Error parsing slide plan JSON:", parseError);
+    // Update status to error
+    statusStore.set(generationId, {
+      id: generationId,
+      status: 'error',
+      progress: 0,
+      message: 'Failed to parse slide plan',
+      error: 'Failed to parse slide plan result'
+    });
     throw new Error("Failed to parse slide plan result");
   }
+  
+  // Update status to generating
+  statusStore.set(generationId, {
+    id: generationId,
+    status: 'generating',
+    progress: 30,
+    message: 'Generating individual slides...'
+  });
   
   // Step 2: Generate each individual slide (now in two phases)
   console.log("Step 2: Generating individual slides (two-phase process)...");
@@ -449,6 +507,15 @@ async function runFullSlideGeneration(
   
   const slides = await Promise.all(slidePromises);
   console.log(`Generated ${slides.length} individual slides`);
+  
+  // Update status to finalizing
+  statusStore.set(generationId, {
+    id: generationId,
+    status: 'finalizing',
+    progress: 80,
+    message: 'Refining the complete presentation...'
+  });
+  
   // Step 3: Refine the presentation
   console.log("Step 3: Refining the complete presentation...");
   const refinementPrompt = createRefinementPrompt(slides, slidePlan, slideConstraint);
@@ -461,8 +528,19 @@ async function runFullSlideGeneration(
     temperature: 0.7,
   });
   
+  const result = cleanedCodeBlock(refinementResult.text);
+  
+  // Update status to completed
+  statusStore.set(generationId, {
+    id: generationId,
+    status: 'completed',
+    progress: 100,
+    message: 'Slide generation complete',
+    result
+  });
+  
   console.log("Slide generation complete");
-  return cleanedCodeBlock(refinementResult.text);
+  return result;
 }
 
 // For direct editing of a slide without the full planning process
@@ -494,10 +572,30 @@ Return ONLY the edited MDX content for the slide, without any additional explana
 };
 
 // Function to directly edit a slide without the multi-step process
-async function directSlideEdit(userPrompt: string, slideConstraint: string, slideContext: string): Promise<string> {
-  console.log("Performing direct slide edit...");
-  
+async function directSlideEdit(
+  generationId: string,
+  userPrompt: string, 
+  slideConstraint: string, 
+  slideContext: string
+): Promise<string> {
+  // Update status
+  statusStore.set(generationId, {
+    id: generationId,
+    status: 'planning',
+    progress: 20,
+    message: 'Planning slide edits...'
+  });
+
+  console.log("Direct slide edit requested...");
   const editPrompt = createDirectEditPrompt(userPrompt, slideConstraint, slideContext);
+  
+  // Update status
+  statusStore.set(generationId, {
+    id: generationId,
+    status: 'generating',
+    progress: 50,
+    message: 'Generating edited slide content...'
+  });
   
   const editResult = await generateText({
     model: typhoon(TYPHOON_MODEL),
@@ -508,61 +606,239 @@ async function directSlideEdit(userPrompt: string, slideConstraint: string, slid
     temperature: 0.7,
   });
   
-  console.log("Slide edit complete");
-  return cleanedCodeBlock(editResult.text);
+  const result = cleanedCodeBlock(editResult.text);
+  
+  // Update status to completed
+  statusStore.set(generationId, {
+    id: generationId,
+    status: 'completed',
+    progress: 100,
+    message: 'Slide edit complete',
+    result
+  });
+  
+  console.log("Direct slide edit complete");
+  return result;
 }
 
+// Handle GET requests to check generation status
+export async function GET(request: Request) {
+  const url = new URL(request.url);
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    return NextResponse.json(
+      { error: "Generation ID is required" },
+      { status: 400 }
+    );
+  }
+  
+  const status = statusStore.get(id);
+  
+  if (!status) {
+    return NextResponse.json(
+      { error: "Generation not found" },
+      { status: 404 }
+    );
+  }
+  
+  return NextResponse.json(status);
+}
+
+// Handle DELETE requests to cancel generation
+export async function DELETE(request: Request) {
+  const url = new URL(request.url);
+  const id = url.searchParams.get('id');
+  
+  if (!id) {
+    return NextResponse.json(
+      { error: "Generation ID is required" },
+      { status: 400 }
+    );
+  }
+  
+  const status = statusStore.get(id);
+  
+  if (!status) {
+    return NextResponse.json(
+      { error: "Generation not found" },
+      { status: 404 }
+    );
+  }
+  
+  // Only allow cancellation if not already complete or error
+  if (status.status === 'completed' || status.status === 'error') {
+    return NextResponse.json(
+      { error: "Cannot cancel completed or failed generation" },
+      { status: 400 }
+    );
+  }
+  
+  // Update the status to indicate cancellation
+  statusStore.set(id, {
+    ...status,
+    status: 'error',
+    progress: 0,
+    message: 'Generation cancelled by user',
+    error: 'User cancelled the operation'
+  });
+  
+  return NextResponse.json({ 
+    success: true, 
+    message: "Generation cancelled successfully" 
+  });
+}
+
+// Extract parameters directly if they're provided without waiting for asynchronous extraction
+async function extractParametersDirectly(
+  generationId: string,
+  userPrompt: string, 
+  userPersona: string, 
+  slideGoal: string, 
+  slideConstraint: string, 
+  task: string,
+  slideContext?: string
+): Promise<void> {
+  try {
+    // Parameters were provided directly
+    
+    // For edit tasks, use direct editing workflow
+    if (task === "edit" && slideContext) {
+      console.log("Processing edit task...");
+      await directSlideEdit(generationId, userPrompt, slideConstraint, slideContext);
+    } else {
+      // For create tasks (or edit without context), run the full generation process
+      await runFullSlideGeneration(
+        generationId,
+        userPrompt, 
+        userPersona, 
+        slideGoal, 
+        slideConstraint,
+        task,
+        slideContext || ""
+      );
+    }
+  } catch (error) {
+    console.error("Error during direct parameters extraction:", error);
+    statusStore.set(generationId, {
+      id: generationId,
+      status: 'error',
+      progress: 0,
+      message: 'Failed to process with direct parameters',
+      error: error instanceof Error ? error.message : String(error)
+    });
+  }
+}
+
+// Handle POST requests to initiate generation
 export async function POST(request: Request) {
   try {
     const requestData = await request.json();
     const { userPrompt, slideContext } = requestData;
-    let { userPersona, slideGoal, slideConstraint, task } = requestData;
-
+    const { userPersona, slideGoal, slideConstraint, task } = requestData;
+    let { generationId } = requestData;
+    
     if (!userPrompt) {
       return NextResponse.json(
         { error: "User prompt is required" },
         { status: 400 }
       );
     }
-
-    // Extract parameters from the prompt if they weren't provided
+    
+    // Generate a unique ID for this generation if not provided
+    if (!generationId) {
+      generationId = generateId();
+    }
+    
+    // Set initial status
+    statusStore.set(generationId, {
+      id: generationId,
+      status: 'understanding',
+      progress: 0,
+      message: 'Processing your request...'
+    });
+    
+    // Extract parameters from the prompt if they weren't provided - now runs async
     if (!userPersona || !slideGoal || !slideConstraint) {
       console.log("Extracting parameters from user prompt...");
-      const extractedParams = await extractParametersFromPrompt(userPrompt, slideContext);
       
-      // Only use extracted values if the corresponding parameters weren't provided
-      userPersona = userPersona || extractedParams.userPersona;
-      slideGoal = slideGoal || extractedParams.slideGoal;
-      slideConstraint = slideConstraint || extractedParams.slideConstraint;
-      task = task || extractedParams.task;
-      
-      console.log("Final parameters after extraction:", { userPersona, slideGoal, slideConstraint, task });
+      // Start the extraction process asynchronously
+      extractParametersFromPrompt(generationId, userPrompt, slideContext)
+        .then(extractedParams => {
+          // Only use extracted values if the corresponding parameters weren't provided
+          const finalUserPersona = userPersona || extractedParams.userPersona;
+          const finalSlideGoal = slideGoal || extractedParams.slideGoal;
+          const finalSlideConstraint = slideConstraint || extractedParams.slideConstraint;
+          const finalTask = task || extractedParams.task;
+          
+          console.log("Final parameters after extraction:", { finalUserPersona, finalSlideGoal, finalSlideConstraint, finalTask });
+          
+          // For edit tasks, use direct editing workflow
+          if (finalTask === "edit" && slideContext) {
+            console.log("Processing edit task...");
+            directSlideEdit(generationId, userPrompt, finalSlideConstraint, slideContext)
+              .catch(error => {
+                console.error("Error during direct slide edit:", error);
+                statusStore.set(generationId, {
+                  id: generationId,
+                  status: 'error',
+                  progress: 0,
+                  message: 'Failed to edit slide',
+                  error: error.message
+                });
+              });
+          } else {
+            // For create tasks (or edit without context), run the full generation process
+            runFullSlideGeneration(
+              generationId,
+              userPrompt, 
+              finalUserPersona, 
+              finalSlideGoal, 
+              finalSlideConstraint,
+              finalTask,
+              slideContext || ""
+            ).catch(error => {
+              console.error("Error during slide generation:", error);
+              statusStore.set(generationId, {
+                id: generationId,
+                status: 'error',
+                progress: 0,
+                message: 'Failed to generate slides',
+                error: error.message
+              });
+            });
+          }
+        })
+        .catch(error => {
+          console.error("Error extracting parameters:", error);
+          statusStore.set(generationId, {
+            id: generationId,
+            status: 'error',
+            progress: 0,
+            message: 'Failed to understand request',
+            error: error.message
+          });
+        });
+    } else {
+      // Parameters were provided directly, run synchronously but handle errors
+      extractParametersDirectly(
+        generationId,
+        userPrompt,
+        userPersona,
+        slideGoal,
+        slideConstraint,
+        task,
+        slideContext
+      );
     }
-
-    // For edit tasks, use direct editing workflow
-    if (task === "edit" && slideContext) {
-      console.log("Processing edit task...");
-      const editedSlide = await directSlideEdit(userPrompt, slideConstraint, slideContext);
-      return NextResponse.json({ text: editedSlide });
-    }
-
-    // For create tasks (or edit without context), run the full generation process
-    const finalPresentation = await runFullSlideGeneration(
-      userPrompt, 
-      userPersona, 
-      slideGoal, 
-      slideConstraint,
-      task,
-      slideContext || ""
-    );
     
-    // Return in the original format expected by the frontend
-    return NextResponse.json({ text: finalPresentation });
+    // Return immediately with the generation ID for polling
+    return NextResponse.json({ generationId });
   
   } catch (error) {
-    console.error("Error generating content:", error);
+    console.error("Error handling generation request:", error);
     return NextResponse.json(
-      { error: "Failed to generate content" },
+      { error: "Failed to process generation request" },
       { status: 500 }
     );
   }
