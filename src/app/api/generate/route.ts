@@ -18,7 +18,7 @@ const cleanedCodeBlock = (text: string) => {
   return text.trim();
 }
 // System prompt to transform the AI into a world-class storyteller and pitch expert
-const SYSTEM_PROMPT = `You are PITCH MASTER, the world's best storyteller and startup pitch creator.
+const SYSTEM_PROMPT = `You are Typhoon the PITCH MASTER, the world's best storyteller and startup pitch creator.
 
 Your expertise:
 - Crafting narratives that capture hearts and minds in seconds
@@ -456,7 +456,7 @@ If certain parameters aren't explicitly stated, use reasonable defaults based on
   const extractionResult = await generateText({
     model: typhoon(TYPHOON_MODEL),
     messages: [
-      { role: "system", content: "You are a helpful assistant named Typhoon!" },
+      { role: "system", content: "You are a helpful assistant." },
       { role: "user", content: extractionPrompt },
     ],
     temperature: 0.2,
