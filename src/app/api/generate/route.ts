@@ -89,6 +89,26 @@ function generateId(): string {
 
 // Step 1: Planning - determine content structure based on user persona and slide goal
 const createPlanningPrompt = (userPrompt: string, userPersona: string, slideGoal: string, slideConstraint: string, task: string, slideContext?: string) => {
+  // For chat tasks, create a simple response prompt
+  if (task === "chat") {
+    return `
+### Chat Interaction Request
+I need you to respond to a user's question or message as PITCH MASTER.
+
+### User message:
+"${userPrompt}"
+
+### Instructions:
+Respond to the user in your role as PITCH MASTER, providing expert advice or information about:
+- Effective presentation and pitching techniques
+- Slide design best practices
+- Storytelling for business contexts
+- Any other relevant topics related to presentations and pitches
+
+Format your response clearly and concisely. Focus on being helpful and sharing your expertise.
+`;
+  }
+  
   // For edit tasks, use a focused prompt for editing existing slides
   if (task === "edit") {
     return `
@@ -289,7 +309,7 @@ interface ExtractedSlideInfo {
 
 // Step 3: Refinement - merge all slides into a cohesive presentation
 const createRefinementPrompt = (slides: string[], slidePlan: SlidePlan, slideConstraint: string) => {
-  console.log('final slides', slides)
+  console.log('final slide before refinement', slides)
   return `
 ### Slide Presentation Refinement
 I have a set of individual slides that need to be refined into a cohesive presentation.
@@ -403,9 +423,6 @@ async function extractParametersFromPrompt(
 ### Parameter Extraction Task
 I need you to analyze a user's prompt for slide creation and identify the following key parameters:
 
-### User Prompt:
-"${userPrompt}"
-
 ${slideContext ? `### Slide Context:\n${slideContext}` : ''}
 
 ### General constraints:
@@ -418,23 +435,28 @@ From the user prompt, extract the following parameters:
 1. User Persona: Who is the intended audience or presenter for these slides? (e.g., business executive, teacher, student, marketer)
 2. Slide Goal: What is the main purpose of these slides? (e.g., persuade, inform, educate, entertain)
 3. Slide Constraint: Are there any specific formatting, style, or content constraints? (e.g., "use dark colors", "include data visualization", "5 slides max")
-4. Task Type: Is this a "create" task for new slides or an "edit" task for existing slides?
+4. Task Type: Is this a "create" task for new slides, an "edit" task for existing slides, or a "chat" task for just answering questions or general conversation?
 
 Your response should be a structured JSON object with the following format:
 {
+  "task": "create, edit, or chat",
   "userPersona": "extracted persona or 'General business professional' if not specified",
   "slideGoal": "extracted goal or 'Inform and persuade' if not specified",
   "slideConstraint": "extracted user constraints combined with general constraints",
-  "task": "create or edit"
 }
 
+Bias to chat tasks if the user's prompt is a question or a conversation.
+For "chat" tasks, the user is not asking to create or edit slides, but rather just asking questions or having a conversation.
 If certain parameters aren't explicitly stated, use reasonable defaults based on context.
+
+### User Prompt:
+"${userPrompt}"
 `;
 
   const extractionResult = await generateText({
     model: typhoon(TYPHOON_MODEL),
     messages: [
-      { role: "system", content: "You are a helpful assistant that extracts structured information from text." },
+      { role: "system", content: "You are a helpful assistant named Typhoon!" },
       { role: "user", content: extractionPrompt },
     ],
     temperature: 0.2,
@@ -559,7 +581,7 @@ async function runFullSlideGeneration(
   // Step 2: Generate each individual slide (now in two phases)
   console.log("Step 2: Generating individual slides (two-phase process)...");
   const slidePromises: Promise<string>[] = [];
-  console.log(slidePlan)
+  console.log('slidePlan', slidePlan)
   
   for (let i = 1; i <= slidePlan.totalSlides; i++) {
     slidePromises.push(generateSlide(slidePlan, i, userPrompt, slideConstraint));
@@ -666,6 +688,110 @@ ${slideConstraint}
 Return ONLY the edited MDX content for the slide, without any additional explanation.
 `;
 };
+
+// For chat interactions without slide editing or creation
+const createChatPrompt = (userPrompt: string) => {
+  return `
+### Chat Interaction
+The user wants to have a conversation or ask a question rather than create or edit slides.
+
+### User message:
+"${userPrompt}"
+
+### Instructions:
+1. Respond to the user's question or message naturally, as PITCH MASTER
+2. Provide helpful, knowledgeable information about presentations, pitches, slides, and storytelling
+3. If the user is asking about how to create effective slides or presentations, offer expert advice
+4. Keep your response concise, friendly, and valuable
+5. Format any tips or advice in a clear, easy-to-read structure
+
+Respond as PITCH MASTER would, maintaining your identity as the world's best storyteller and startup pitch creator.
+`;
+};
+
+// Function to handle a chat interaction without slide creation/editing
+async function handleChatInteraction(
+  generationId: string,
+  userPrompt: string
+): Promise<string> {
+  // Get current status or create a new one with empty phaseContent
+  const initialStatus = statusStore.get(generationId) || {
+    id: generationId,
+    status: 'understanding',
+    progress: 0,
+    message: 'Processing your request...',
+    phaseContent: {}
+  };
+  
+  console.log("Chat interaction requested...");
+  
+  // Update status
+  statusStore.set(generationId, {
+    ...initialStatus,
+    status: 'generating',
+    progress: 50,
+    message: 'Generating response...'
+  });
+  
+  const chatPrompt = createChatPrompt(userPrompt);
+  
+  // Store the chat prompt in phaseContent
+  const currentStatus = statusStore.get(generationId);
+  if (currentStatus) {
+    const updatedPhaseContent = {
+      ...(currentStatus.phaseContent),
+      planning: chatPrompt
+    };
+    
+    console.log("Updating planning phase content in chat interaction, keys:", Object.keys(updatedPhaseContent));
+    
+    statusStore.set(generationId, {
+      ...currentStatus,
+      phaseContent: updatedPhaseContent
+    });
+  }
+  
+  const chatResult = await generateText({
+    model: typhoon(TYPHOON_MODEL),
+    messages: [
+      { role: "system", content: SYSTEM_PROMPT },
+      { role: "user", content: chatPrompt },
+    ],
+    temperature: 0.7,
+  });
+  
+  // Store the chat response in phaseContent
+  const statusAfterGeneration = statusStore.get(generationId);
+  if (statusAfterGeneration) {
+    const updatedPhaseContent = {
+      ...(statusAfterGeneration.phaseContent),
+      generating: [chatResult.text]
+    };
+    
+    console.log("Updating generating phase content in chat interaction, keys:", Object.keys(updatedPhaseContent));
+    
+    statusStore.set(generationId, {
+      ...statusAfterGeneration,
+      phaseContent: updatedPhaseContent
+    });
+  }
+  
+  const result = cleanedCodeBlock(chatResult.text);
+  
+  // Update status to completed
+  const finalStatus = statusStore.get(generationId);
+  statusStore.set(generationId, {
+    ...(finalStatus || initialStatus),
+    status: 'completed',
+    progress: 100,
+    message: 'Chat response complete',
+    result,
+    phaseContent: finalStatus?.phaseContent
+  });
+  
+  console.log("Chat interaction complete");
+  return result;
+}
 
 // Function to directly edit a slide without the multi-step process
 async function directSlideEdit(
@@ -858,8 +984,13 @@ async function extractParametersDirectly(
   try {
     // Parameters were provided directly
     
+    // For chat tasks, handle as conversation
+    if (task === "chat") {
+      console.log("Processing chat task...");
+      await handleChatInteraction(generationId, userPrompt);
+    }
     // For edit tasks, use direct editing workflow
-    if (task === "edit" && slideContext) {
+    else if (task === "edit" && slideContext) {
       console.log("Processing edit task...");
       await directSlideEdit(generationId, userPrompt, slideConstraint, slideContext);
     } else {
@@ -930,8 +1061,23 @@ export async function POST(request: Request) {
           
           console.log("Final parameters after extraction:", { finalUserPersona, finalSlideGoal, finalSlideConstraint, finalTask });
           
+          // For chat tasks, handle as conversation
+          if (finalTask === "chat") {
+            console.log("Processing chat task...");
+            handleChatInteraction(generationId, userPrompt)
+              .catch(error => {
+                console.error("Error during chat interaction:", error);
+                statusStore.set(generationId, {
+                  id: generationId,
+                  status: 'error',
+                  progress: 0,
+                  message: 'Failed to respond to chat',
+                  error: error.message
+                });
+              });
+          }
           // For edit tasks, use direct editing workflow
-          if (finalTask === "edit" && slideContext) {
+          else if (finalTask === "edit" && slideContext) {
             console.log("Processing edit task...");
             directSlideEdit(generationId, userPrompt, finalSlideConstraint, slideContext)
               .catch(error => {
