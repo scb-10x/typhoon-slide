@@ -3,6 +3,7 @@ import { generateText } from "ai";
 
 // Import Typhoon client utility
 import { typhoon } from "@/lib/typhoon";
+import { TYPHOON_MODEL } from "@/const";
 
 
 const cleanedCodeBlock = (text: string) => {
@@ -301,7 +302,7 @@ async function generateSlide(slidePlan: SlidePlan, slideNumber: number, userProm
   const extractionPrompt = createInfoExtractionPrompt(slidePlan, slideNumber, userPrompt);
   
   const extractionResult = await generateText({
-    model: typhoon("llm"),
+    model: typhoon(TYPHOON_MODEL),
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: extractionPrompt },
@@ -329,7 +330,7 @@ async function generateSlide(slidePlan: SlidePlan, slideNumber: number, userProm
   const contentPrompt = createSlideContentPrompt(slidePlan, slideNumber, extractedInfo, slideConstraint);
   
   const contentResult = await generateText({
-    model: typhoon("llm"),
+    model: typhoon(TYPHOON_MODEL),
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: contentPrompt },
@@ -381,7 +382,7 @@ Return ONLY a JSON object with the following format:
 `;
 
   const extractionResult = await generateText({
-    model: typhoon("llm"),
+    model: typhoon(TYPHOON_MODEL),
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: extractionPrompt },
@@ -420,7 +421,7 @@ async function runFullSlideGeneration(
   const planningPrompt = createPlanningPrompt(userPrompt, userPersona, slideGoal, slideConstraint, task, slideContext);
   console.log('planningPrompt', planningPrompt)
   const planResult = await generateText({
-    model: typhoon("llm"),
+    model: typhoon(TYPHOON_MODEL),
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: planningPrompt },
@@ -452,7 +453,7 @@ async function runFullSlideGeneration(
   console.log("Step 3: Refining the complete presentation...");
   const refinementPrompt = createRefinementPrompt(slides, slidePlan, slideConstraint);
   const refinementResult = await generateText({
-    model: typhoon("llm"),
+    model: typhoon(TYPHOON_MODEL),
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: refinementPrompt },
@@ -499,7 +500,7 @@ async function directSlideEdit(userPrompt: string, slideConstraint: string, slid
   const editPrompt = createDirectEditPrompt(userPrompt, slideConstraint, slideContext);
   
   const editResult = await generateText({
-    model: typhoon("llm"),
+    model: typhoon(TYPHOON_MODEL),
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: editPrompt },

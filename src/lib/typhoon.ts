@@ -1,3 +1,4 @@
+import { TYPHOON_API_URL } from '@/const';
 import { createOpenAI } from '@ai-sdk/openai';
 
 /**
@@ -7,7 +8,7 @@ import { createOpenAI } from '@ai-sdk/openai';
  */
 export const typhoon = (modelId: string) => {
   const client = createOpenAI({
-    baseURL: 'https://api.opentyphoon.ai/v1',
+    baseURL: TYPHOON_API_URL,
     apiKey: process.env.OPENAI_API_KEY || '',
     name: 'typhoon', // Change the provider name to typhoon
     compatibility: 'compatible', // Use compatible mode for 3rd party providers

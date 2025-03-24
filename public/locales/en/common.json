@@ -1,12 +1,12 @@
 {
   "app": {
     "title": "Typhoon Slide",
-    "description": "Create beautiful slide decks in minutes with Typhoon Slide's AI assistance",
+    "description": "Create slide decks in minutes with Typhoon Slide's AI assistance",
     "openApp": "Open App"
   },
   "hero": {
-    "title": "Create beautiful slides with AI",
-    "subtitle": "Typhoon Slide turns your ideas into professional presentations in seconds",
+    "title": "Create slides with AI",
+    "subtitle": "Typhoon Slide turns your ideas into presentations in seconds",
     "getStarted": "Get Started"
   },
   "features": {
