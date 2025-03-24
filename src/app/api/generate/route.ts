@@ -70,6 +70,12 @@ interface GenerationStatus {
   message: string;
   result?: string;
   error?: string;
+  phaseContent?: {
+    understanding?: string;
+    planning?: string;
+    generating?: string[];
+    finalizing?: string;
+  };
 }
 
 // In-memory store for tracking generation status
@@ -376,9 +382,18 @@ async function extractParametersFromPrompt(
   slideConstraint: string;
   task: string;
 }> {
+  // Get current status or create a new one with empty phaseContent
+  const initialStatus = statusStore.get(generationId) || {
+    id: generationId,
+    status: 'understanding',
+    progress: 0,
+    message: 'Processing your request...',
+    phaseContent: {}
+  };
+  
   // Update status
   statusStore.set(generationId, {
-    id: generationId,
+    ...initialStatus,
     status: 'understanding',
     progress: 5,
     message: 'Analyzing your request...'
@@ -425,6 +440,22 @@ If certain parameters aren't explicitly stated, use reasonable defaults based on
     temperature: 0.2,
   });
   
+  // Store the understanding phase content
+  const currentStatus = statusStore.get(generationId);
+  if (currentStatus) {
+    const updatedPhaseContent = {
+      ...(currentStatus.phaseContent),
+      understanding: extractionResult.text
+    };
+    
+    console.log("Updating understanding phase content, keys:", Object.keys(updatedPhaseContent));
+    
+    statusStore.set(generationId, {
+      ...currentStatus,
+      phaseContent: updatedPhaseContent
+    });
+  }
+  
   try {
     const extractedParams = JSON.parse(cleanedCodeBlock(extractionResult.text));
     
@@ -451,9 +482,18 @@ async function runFullSlideGeneration(
   task: string = "",
   slideContext: string = ""
 ): Promise<string> {
+  // Get current status or create a new one with empty phaseContent
+  const initialStatus = statusStore.get(generationId) || {
+    id: generationId,
+    status: 'understanding',
+    progress: 0,
+    message: 'Processing your request...',
+    phaseContent: {}
+  };
+  
   // Update status to planning
   statusStore.set(generationId, {
-    id: generationId,
+    ...initialStatus,
     status: 'planning',
     progress: 15,
     message: 'Planning presentation structure...'
@@ -470,6 +510,23 @@ async function runFullSlideGeneration(
     ],
     temperature: 0.7,
   });
+  
+  // Store the planning phase content
+  const currentStatusAfterPlanning = statusStore.get(generationId);
+  if (currentStatusAfterPlanning) {
+    const updatedPhaseContent = {
+      ...(currentStatusAfterPlanning.phaseContent),
+      planning: planResult.text
+    };
+    
+    console.log("Updating planning phase content, keys:", Object.keys(updatedPhaseContent));
+    
+    statusStore.set(generationId, {
+      ...currentStatusAfterPlanning,
+      phaseContent: updatedPhaseContent
+    });
+  }
+  
   // Parse the slide plan
   let slidePlan: SlidePlan;
   try {
@@ -489,7 +546,10 @@ async function runFullSlideGeneration(
   }
   
   // Update status to generating
+
+  const currentStatusBeforeGenerating = statusStore.get(generationId);
   statusStore.set(generationId, {
+    ...currentStatusBeforeGenerating!,
     id: generationId,
     status: 'generating',
     progress: 30,
@@ -508,8 +568,26 @@ async function runFullSlideGeneration(
   const slides = await Promise.all(slidePromises);
   console.log(`Generated ${slides.length} individual slides`);
   
+  // Store the generated slides content
+  const currentStatusAfterGenerating = statusStore.get(generationId);
+  if (currentStatusAfterGenerating) {
+    const updatedPhaseContent = {
+      ...(currentStatusAfterGenerating.phaseContent),
+      generating: slides
+    };
+    
+    console.log("Updating generating phase content, keys:", Object.keys(updatedPhaseContent));
+    
+    statusStore.set(generationId, {
+      ...currentStatusAfterGenerating,
+      phaseContent: updatedPhaseContent
+    });
+  }
+  
   // Update status to finalizing
+  const currentStatusBeforeFinalizing = statusStore.get(generationId);
   statusStore.set(generationId, {
+    ...currentStatusBeforeFinalizing!,
     id: generationId,
     status: 'finalizing',
     progress: 80,
@@ -528,15 +606,33 @@ async function runFullSlideGeneration(
     temperature: 0.7,
   });
   
+  // Store the finalizing phase content
+  const currentStatusAfterFinalizing = statusStore.get(generationId);
+  if (currentStatusAfterFinalizing) {
+    const updatedPhaseContent = {
+      ...(currentStatusAfterFinalizing.phaseContent),
+      finalizing: refinementResult.text
+    };
+    
+    console.log("Updating finalizing phase content, keys:", Object.keys(updatedPhaseContent));
+    
+    statusStore.set(generationId, {
+      ...currentStatusAfterFinalizing,
+      phaseContent: updatedPhaseContent
+    });
+  }
+  
   const result = cleanedCodeBlock(refinementResult.text);
   
   // Update status to completed
+  const finalStatus = statusStore.get(generationId);
   statusStore.set(generationId, {
     id: generationId,
     status: 'completed',
     progress: 100,
     message: 'Slide generation complete',
-    result
+    result,
+    phaseContent: finalStatus?.phaseContent
   });
   
   console.log("Slide generation complete");
@@ -578,20 +674,49 @@ async function directSlideEdit(
   slideConstraint: string, 
   slideContext: string
 ): Promise<string> {
-  // Update status
-  statusStore.set(generationId, {
+  // Get current status or create a new one with empty phaseContent
+  const initialStatus = statusStore.get(generationId) || {
     id: generationId,
+    status: 'understanding',
+    progress: 0,
+    message: 'Processing your request...',
+    phaseContent: {}
+  };
+  
+  console.log("Direct slide edit requested...");
+  
+  // Update status to planning
+  statusStore.set(generationId, {
+    ...initialStatus,
     status: 'planning',
     progress: 20,
     message: 'Planning slide edits...'
   });
-
-  console.log("Direct slide edit requested...");
+  
   const editPrompt = createDirectEditPrompt(userPrompt, slideConstraint, slideContext);
   
-  // Update status
+  // Store planning phase content (the prompt in this case)
+  const currentStatusAfterPlanning = statusStore.get(generationId);
+  if (currentStatusAfterPlanning) {
+    const updatedPhaseContent = {
+      ...(currentStatusAfterPlanning.phaseContent),
+      planning: editPrompt
+    };
+    
+    console.log("Updating planning phase content in directSlideEdit, keys:", Object.keys(updatedPhaseContent));
+    
+    statusStore.set(generationId, {
+      ...currentStatusAfterPlanning,
+      phaseContent: updatedPhaseContent
+    });
+  }
+  
+  // Get updated status for generating phase
+  const statusBeforeGeneration = statusStore.get(generationId);
+  
+  // Update status to generating
   statusStore.set(generationId, {
-    id: generationId,
+    ...statusBeforeGeneration!,
     status: 'generating',
     progress: 50,
     message: 'Generating edited slide content...'
@@ -606,15 +731,35 @@ async function directSlideEdit(
     temperature: 0.7,
   });
   
+  // Store generating phase content
+  const currentStatusAfterGenerating = statusStore.get(generationId);
+  if (currentStatusAfterGenerating) {
+    const updatedPhaseContent = {
+      ...(currentStatusAfterGenerating.phaseContent),
+      generating: [editResult.text]
+    };
+    
+    console.log("Updating generating phase content in directSlideEdit, keys:", Object.keys(updatedPhaseContent));
+    
+    statusStore.set(generationId, {
+      ...currentStatusAfterGenerating,
+      phaseContent: updatedPhaseContent
+    });
+  }
+  
   const result = cleanedCodeBlock(editResult.text);
+  
+  // Get final status for completed state
+  const finalStatus = statusStore.get(generationId);
   
   // Update status to completed
   statusStore.set(generationId, {
-    id: generationId,
+    ...(finalStatus || initialStatus),
     status: 'completed',
     progress: 100,
     message: 'Slide edit complete',
-    result
+    result,
+    phaseContent: finalStatus?.phaseContent
   });
   
   console.log("Direct slide edit complete");
@@ -641,6 +786,17 @@ export async function GET(request: Request) {
       { status: 404 }
     );
   }
+  
+  // Log status details including phaseContent
+  console.log(`GET status for id ${id}:`, {
+    id: status.id,
+    status: status.status,
+    progress: status.progress,
+    hasPhaseContent: !!status.phaseContent,
+    phaseContent: status.phaseContent,
+    phaseContentKeys: status.phaseContent ? Object.keys(status.phaseContent) : [],
+  });
+  console.log('status', status)
   
   return NextResponse.json(status);
 }
@@ -755,7 +911,8 @@ export async function POST(request: Request) {
       id: generationId,
       status: 'understanding',
       progress: 0,
-      message: 'Processing your request...'
+      message: 'Processing your request...',
+      phaseContent: {}
     });
     
     // Extract parameters from the prompt if they weren't provided - now runs async
