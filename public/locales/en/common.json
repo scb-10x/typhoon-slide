@@ -7,13 +7,27 @@
   "hero": {
     "title": "Create slides with AI",
     "subtitle": "Typhoon Slide turns your ideas into presentations in seconds",
-    "getStarted": "Get Started"
+    "getStarted": "Get Started",
+    "tagline": "AI-Powered Presentations"
   },
   "features": {
     "title": "Features",
+    "subtitle": "Powerful tools to create professional presentations effortlessly",
     "markdown": "Write slides in Markdown",
     "separateSlides": "Use \"---\" to separate slides",
-    "formatting": "Supports **bold**, *italic*, and more!"
+    "formatting": "Supports **bold**, *italic*, and more!",
+    "feature1": {
+      "title": "AI-Powered Creation",
+      "description": "Generate content and layout suggestions with just a few prompts"
+    },
+    "feature2": {
+      "title": "Markdown Support",
+      "description": "Write slides in familiar Markdown syntax with live preview"
+    },
+    "feature3": {
+      "title": "Professional Content",
+      "description": "Engaging templates and styling for impressive presentations"
+    }
   },
   "usage": {
     "title": "How to Use",
@@ -26,7 +40,8 @@
     "startCreating": "Start creating your slides now!"
   },
   "navigation": {
-    "language": "Language"
+    "language": "Language",
+    "howItWorks": "How It Works"
   },
   "editor": {
     "download": "Download",
@@ -41,11 +56,47 @@
     "openEditor": "Open Editor"
   },
   "footer": {
-    "builtWith": "Built with Typhoon"
+    "builtWith": "Built with",
+    "copyright": "© 2025 Typhoon Slide."
   },
   "callToAction": {
-    "title": "Create Beautiful Slides in Minutes",
+    "title": "Create Engaging Slides in Minutes",
     "subtitle": "Typhoon Slide helps you create professional presentations faster than ever before.",
     "startCreating": "Start Creating"
+  },
+  "methodology": {
+    "title": "How Our Slide Generation Works",
+    "subtitle": "Our advanced AI-powered methodology transforms your ideas into compelling presentations through a 5-step process",
+    "backToHome": "Back to Home",
+    "tryItYourself": "Try It Yourself",
+    "pageTitle": "Slide Generation Technology",
+    "steps": {
+      "understanding": {
+        "title": "Understanding Request",
+        "description": "The system analyzes your request to extract key parameters like audience, goals, and constraints.",
+        "content": "The AI extracts parameters from your prompt: user persona, slide goal, slide constraints, and task type (create, edit, or chat)."
+      },
+      "planning": {
+        "title": "Planning Structure",
+        "description": "Based on extracted parameters, the system creates a detailed slide-by-slide plan.",
+        "content": "The planner creates a JSON structure with each slide's type, title, key message, and content points, forming the overall narrative flow."
+      },
+      "extracting": {
+        "title": "Extracting Information",
+        "description": "For each slide, relevant information is extracted from your input to support the key message.",
+        "content": "Each slide gets carefully extracted key facts, compelling expressions, and storytelling elements designed to convey your message effectively."
+      },
+      "generating": {
+        "title": "Generating Slides",
+        "description": "Individual slides are generated with optimal content and formatting based on the plan.",
+        "content": "Each slide is crafted to have a clear focus, compelling visuals through language, and follows best practices in presentation design."
+      },
+      "refining": {
+        "title": "Refining Presentation",
+        "description": "The entire presentation is refined to ensure narrative flow, consistency, and polish.",
+        "content": "The final refinement process ensures transitions between slides are smooth, formatting is consistent, and the overall story builds properly."
+      }
+    },
+    "technicalDetails": "Technical Details:"
   }
 } 

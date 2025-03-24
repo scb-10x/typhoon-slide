@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Typhoon Slide",
-  description: "Create beautiful slide decks in minutes with Typhoon Slide's AI assistance",
+  description: "Create engaging slide decks in minutes with Typhoon Slide's AI assistance",
 };
 
 export default function RootLayout({
