@@ -381,12 +381,12 @@ async function generateSlide(slidePlan: SlidePlan, slideNumber: number, userProm
   
   const contentResult = await generateText({
     model: typhoon(TYPHOON_MODEL),
-    maxTokens: 8192,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: contentPrompt },
     ],
     temperature: 0.7,
+    maxTokens: 8192,
   });
   
   return cleanedCodeBlock(contentResult.text);
@@ -460,8 +460,8 @@ If certain parameters aren't explicitly stated, use reasonable defaults based on
       { role: "system", content: "You are a helpful assistant." },
       { role: "user", content: extractionPrompt },
     ],
-    maxTokens: 4096,
     temperature: 0.2,
+    maxTokens: 8192,
   });
   
   // Store the understanding phase content
@@ -532,8 +532,8 @@ async function runFullSlideGeneration(
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: planningPrompt },
     ],
-    maxTokens: 8192,
     temperature: 0.7,
+    maxTokens: 8192,
   });
   
   // Store the planning phase content
@@ -762,6 +762,7 @@ async function handleChatInteraction(
       { role: "user", content: chatPrompt },
     ],
     temperature: 0.7,
+    maxTokens: 8192,
   });
   
   // Store the chat response in phaseContent
@@ -859,6 +860,7 @@ async function directSlideEdit(
       { role: "user", content: editPrompt },
     ],
     temperature: 0.7,
+    maxTokens: 8192,
   });
   
   // Store generating phase content
