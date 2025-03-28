@@ -13,7 +13,6 @@ const cleanedCodeBlock = (text: string) => {
   
   // Remove closing code fences
   text = text.replace(/```$/gm, '');
-  
   // Trim extra whitespace
   return text.trim();
 }
@@ -358,6 +357,7 @@ async function generateSlide(slidePlan: SlidePlan, slideNumber: number, userProm
       { role: "user", content: extractionPrompt },
     ],
     temperature: 0.5,
+    maxTokens: 4096,
   });
   
   let extractedInfo: ExtractedSlideInfo;
@@ -381,6 +381,7 @@ async function generateSlide(slidePlan: SlidePlan, slideNumber: number, userProm
   
   const contentResult = await generateText({
     model: typhoon(TYPHOON_MODEL),
+    maxTokens: 8192,
     messages: [
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: contentPrompt },
@@ -459,6 +460,7 @@ If certain parameters aren't explicitly stated, use reasonable defaults based on
       { role: "system", content: "You are a helpful assistant." },
       { role: "user", content: extractionPrompt },
     ],
+    maxTokens: 4096,
     temperature: 0.2,
   });
   
@@ -530,6 +532,7 @@ async function runFullSlideGeneration(
       { role: "system", content: SYSTEM_PROMPT },
       { role: "user", content: planningPrompt },
     ],
+    maxTokens: 8192,
     temperature: 0.7,
   });
   
@@ -626,6 +629,7 @@ async function runFullSlideGeneration(
       { role: "user", content: refinementPrompt },
     ],
     temperature: 0.7,
+    maxTokens: 16384,
   });
   
   // Store the finalizing phase content
