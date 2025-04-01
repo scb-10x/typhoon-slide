@@ -1,98 +1,98 @@
 {
   "app": {
     "title": "Typhoon Slide",
-    "description": "Create slide decks in minutes with Typhoon Slide's AI assistance",
-    "openApp": "Open App"
+    "description": "Create professional slide decks in minutes with Typhoon Slide - powered by OpenTyphoon's state-of-the-art AI technology",
+    "openApp": "Create Slides Now"
   },
   "hero": {
-    "title": "Create slides with AI",
-    "subtitle": "Typhoon Slide turns your ideas into presentations in seconds",
-    "getStarted": "Get Started",
-    "tagline": "AI-Powered Presentations"
+    "title": "Create Stunning Presentations with AI",
+    "subtitle": "Typhoon Slide leverages cutting-edge LLM technology to transform your ideas into professional presentations in seconds. Built with OpenTyphoon.",
+    "getStarted": "Create Your First Slide",
+    "tagline": "AI-Powered Presentation Creator"
   },
   "features": {
-    "title": "Features",
-    "subtitle": "Powerful tools to create professional presentations effortlessly",
+    "title": "Powerful AI Features",
+    "subtitle": "Experience the future of presentation creation with Typhoon's advanced AI capabilities",
     "markdown": "Write slides in Markdown",
     "separateSlides": "Use \"---\" to separate slides",
     "formatting": "Supports **bold**, *italic*, and more!",
     "feature1": {
-      "title": "AI-Powered Creation",
-      "description": "Generate content and layout suggestions with just a few prompts"
+      "title": "AI-Powered Content Generation",
+      "description": "Generate complete professional slide content with a simple prompt. Typhoon's LLM understands context and creates cohesive presentations."
     },
     "feature2": {
-      "title": "Markdown Support",
-      "description": "Write slides in familiar Markdown syntax with live preview"
+      "title": "Advanced Markdown Support",
+      "description": "Create slides using familiar Markdown syntax with real-time preview. Format text, add lists, and structure content effortlessly."
     },
     "feature3": {
-      "title": "Professional Content",
-      "description": "Engaging templates and styling for impressive presentations"
+      "title": "Professional-Grade Output",
+      "description": "Get presentation-ready slides with optimized layout, engaging content flow, and professional styling - all created by Typhoon AI."
     }
   },
   "usage": {
-    "title": "How to Use",
-    "step1": "Edit the markdown on the right",
-    "step2": "See the slides preview on the left",
-    "step3": "Use the AI chat to generate content"
+    "title": "How to Use Typhoon Slide",
+    "step1": "Edit the markdown content directly or ask the AI to generate it",
+    "step2": "Preview your slides in real-time with automatic formatting",
+    "step3": "Refine your presentation with AI assistance for professional results"
   },
   "conclusion": {
-    "title": "That's It!",
-    "startCreating": "Start creating your slides now!"
+    "title": "Experience the Future of Presentations",
+    "startCreating": "Start creating AI-powered slides now with Typhoon!"
   },
   "navigation": {
     "language": "Language",
-    "howItWorks": "How It Works"
+    "howItWorks": "AI Technology"
   },
   "editor": {
-    "download": "Download",
+    "download": "Download Slides",
     "editSlides": "Edit Slides",
-    "presentationPreview": "Presentation Preview",
+    "presentationPreview": "Live Presentation Preview",
     "slides": "slides",
-    "editingMarkdown": "Editing Markdown",
+    "editingMarkdown": "Editing Presentation Content",
     "changesAutosaved": "Changes are saved automatically",
-    "tryTyphoonSlide": "Try Typhoon Slide",
-    "makeSlides": "Make slides in minutes",
-    "emptySlideMessage": "Your slides will appear here. Start by writing in the editor or asking the AI to create content for you.",
-    "openEditor": "Open Editor"
+    "tryTyphoonSlide": "Try Typhoon Slide Creator",
+    "makeSlides": "Create professional slides with AI",
+    "emptySlideMessage": "Your AI-generated slides will appear here. Start by writing in the editor or asking Typhoon AI to create presentation content for you.",
+    "openEditor": "Open Slide Editor"
   },
   "callToAction": {
-    "title": "Create Engaging Slides in Minutes",
-    "subtitle": "Typhoon Slide helps you create professional presentations faster than ever before.",
-    "startCreating": "Start Creating"
+    "title": "Transform Ideas Into Presentations Instantly",
+    "subtitle": "Experience how Typhoon's AI technology can help you create professional, engaging presentations 10x faster than traditional methods.",
+    "startCreating": "Try Typhoon Slide Now"
   },
   "methodology": {
-    "title": "How Our Slide Generation Works",
-    "subtitle": "Our advanced AI-powered methodology transforms your ideas into compelling presentations through a 5-step process",
+    "title": "Typhoon's Advanced AI Slide Generation Technology",
+    "subtitle": "Our state-of-the-art large language model transforms your ideas into compelling presentations through a sophisticated 5-step process",
     "backToHome": "Back to Home",
-    "tryItYourself": "Try It Yourself",
-    "pageTitle": "Slide Generation Technology",
+    "tryItYourself": "Create Your Slides Now",
+    "pageTitle": "AI-Powered Slide Generation Technology",
     "steps": {
       "understanding": {
-        "title": "Understanding Request",
-        "description": "The system analyzes your request to extract key parameters like audience, goals, and constraints.",
-        "content": "The AI extracts parameters from your prompt: user persona, slide goal, slide constraints, and task type (create, edit, or chat)."
+        "title": "Intelligent Request Analysis",
+        "description": "Typhoon's AI analyzes your request in detail to extract key parameters like audience, presentation goals, and specific requirements.",
+        "content": "The advanced language model extracts critical parameters from your prompt: target audience, presentation objectives, slide constraints, and specific task requirements (creation, editing, or interactive assistance)."
       },
       "planning": {
-        "title": "Planning Structure",
-        "description": "Based on extracted parameters, the system creates a detailed slide-by-slide plan.",
-        "content": "The planner creates a JSON structure with each slide's type, title, key message, and content points, forming the overall narrative flow."
+        "title": "Strategic Presentation Planning",
+        "description": "Based on extracted parameters, Typhoon AI creates a comprehensive slide-by-slide plan for optimal information flow.",
+        "content": "The AI planner creates a sophisticated semantic structure with each slide's type, headline, key message, and supporting content points, ensuring a coherent narrative flow optimized for audience engagement."
       },
       "extracting": {
-        "title": "Extracting Information",
-        "description": "For each slide, relevant information is extracted from your input to support the key message.",
-        "content": "Each slide gets carefully extracted key facts, compelling expressions, and storytelling elements designed to convey your message effectively."
+        "title": "Smart Content Extraction",
+        "description": "For each slide, Typhoon AI identifies and extracts the most relevant information to effectively support your key messages.",
+        "content": "Each slide is enhanced with carefully extracted key facts, compelling expressions, and strategic storytelling elements designed to maximize the impact of your presentation and maintain audience attention."
       },
       "generating": {
-        "title": "Generating Slides",
-        "description": "Individual slides are generated with optimal content and formatting based on the plan.",
-        "content": "Each slide is crafted to have a clear focus, compelling visuals through language, and follows best practices in presentation design."
+        "title": "AI-Powered Slide Generation",
+        "description": "Individual slides are generated with optimal content distribution and formatting based on presentation best practices.",
+        "content": "Each slide is meticulously crafted with clear focus points, visually engaging language, and adherence to professional presentation design principles - all generated by Typhoon's advanced AI."
       },
       "refining": {
-        "title": "Refining Presentation",
-        "description": "The entire presentation is refined to ensure narrative flow, consistency, and polish.",
-        "content": "The final refinement process ensures transitions between slides are smooth, formatting is consistent, and the overall story builds properly."
+        "title": "Intelligent Presentation Refinement",
+        "description": "The entire presentation undergoes AI-driven refinement to ensure narrative coherence, visual consistency, and professional polish.",
+        "content": "The final refinement process ensures smooth transitions between slides, consistent formatting throughout, and a compelling story arc that builds to your key message - all optimized by Typhoon's presentation AI."
       }
     },
-    "technicalDetails": "Technical Details:"
+    "technicalDetails": "Typhoon AI Technical Details:"
   }
 }

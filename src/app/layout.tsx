@@ -5,6 +5,7 @@ import { I18nProvider } from "@/lib/i18n-provider";
 import Link from 'next/link';
 import { FaGithub, FaDiscord, FaXTwitter } from 'react-icons/fa6';
 import { SiHuggingface } from 'react-icons/si';
+import Script from 'next/script';
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,8 +18,44 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Typhoon Slide",
-  description: "Create engaging slide decks in minutes with Typhoon Slide's AI assistance",
+  title: "Typhoon Slide | Create AI-Powered Presentation Decks",
+  description: "Create engaging slide decks in minutes with Typhoon Slide - an AI-powered presentation creator built with Typhoon. Transform ideas into professional presentations with ease.",
+  keywords: ["Typhoon AI", "slide deck creator", "AI presentation", "markdown slides", "AI slide generator", "OpenTyphoon", "presentation maker", "MDX slides"],
+  authors: [{ name: "Typhoon Team", url: "https://opentyphoon.ai" }],
+  creator: "Typhoon",
+  publisher: "Typhoon",
+  metadataBase: new URL("https://opentyphoon.ai"),
+  alternates: {
+    canonical: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+  openGraph: {
+    title: "Typhoon Slide | Create AI-Powered Presentation Decks",
+    description: "Create professional presentations in minutes with AI assistance. Typhoon Slide showcases what's possible with the OpenTyphoon AI platform.",
+    url: "https://opentyphoon.ai",
+    siteName: "Typhoon Slide",
+    images: [
+      {
+        url: "/images/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Typhoon Slide - AI-Powered Presentation Creator",
+      },
+    ],
+    locale: "en_US",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Typhoon Slide | Create AI-Powered Presentation Decks",
+    description: "Create professional presentations in minutes with AI assistance. A showcase of Typhoon's capabilities.",
+    images: ["/images/og-image.jpg"],
+    creator: "@opentyphoon",
+    site: "@opentyphoon",
+  },
 };
 
 export default function RootLayout({
@@ -28,6 +65,35 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
+      <head>
+        <Script id="json-ld" type="application/ld+json">
+          {`
+            {
+              "@context": "https://schema.org",
+              "@type": "SoftwareApplication",
+              "name": "Typhoon Slide",
+              "applicationCategory": "BusinessApplication",
+              "operatingSystem": "Web",
+              "offers": {
+                "@type": "Offer",
+                "price": "0",
+                "priceCurrency": "USD"
+              },
+              "description": "AI-powered presentation creator built with Typhoon. Create professional slide decks in minutes with the power of AI assistance.",
+              "creator": {
+                "@type": "Organization",
+                "name": "Typhoon",
+                "url": "https://opentyphoon.ai"
+              },
+              "screenshot": "/screenshot.png",
+              "softwareHelp": {
+                "@type": "CreativeWork",
+                "url": "https://opentyphoon.ai"
+              }
+            }
+          `}
+        </Script>
+      </head>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
