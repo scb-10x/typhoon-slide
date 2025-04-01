@@ -7,7 +7,6 @@ import { useTheme } from 'next-themes';
 import { ClipboardIcon, ArrowDownTrayIcon } from '@heroicons/react/24/outline';
 import CodeMirror from '@uiw/react-codemirror';
 import { markdown as markdownExtension } from '@codemirror/lang-markdown';
-import { oneDark } from '@codemirror/theme-one-dark';
 
 interface MarkdownEditorProps {
   value: string;
