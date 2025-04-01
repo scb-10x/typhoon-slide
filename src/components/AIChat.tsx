@@ -22,12 +22,12 @@ import { motion, AnimatePresence } from "framer-motion";
 interface GenerationStatus {
   id: string;
   status:
-    | "understanding"
-    | "planning"
-    | "generating"
-    | "finalizing"
-    | "completed"
-    | "error";
+  | "understanding"
+  | "planning"
+  | "generating"
+  | "finalizing"
+  | "completed"
+  | "error";
   progress: number; // 0-100
   message: string;
   result?: string;
@@ -128,9 +128,8 @@ export default function AIChat({
               newMessages[messageIndex].isLoading = false;
               setIsLoading(false);
             } else if (status.status === "error") {
-              newMessages[messageIndex].content = `Error: ${
-                status.error || "Unknown error occurred"
-              }`;
+              newMessages[messageIndex].content = `Error: ${status.error || "Unknown error occurred"
+                }`;
               newMessages[messageIndex].isLoading = false;
               setIsLoading(false);
             } else {
@@ -156,7 +155,7 @@ export default function AIChat({
     []
   );
 
-  const handleSubmit =  useCallback(async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
     if (!inputValue.trim() || isLoading) return;
 
@@ -531,33 +530,32 @@ export default function AIChat({
               exit={{ opacity: 0 }}
             >
               <motion.div
-                className="bg-white dark:bg-gray-800 rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col"
+                className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] flex flex-col"
                 initial={{ scale: 0.9, y: 20 }}
                 animate={{ scale: 1, y: 0 }}
                 exit={{ scale: 0.9, y: 20 }}
               >
-                <div className="flex justify-between items-center p-4 border-b border-gray-200 dark:border-gray-700">
-                  <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                <div className="flex justify-between items-center p-4 border-b border-gray-200">
+                  <h3 className="text-lg font-semibold text-gray-800">
                     {formatPhase(activePhase)} Phase Content
                   </h3>
                   <button
                     onClick={onClose}
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                    className="text-gray-500 hover:text-gray-700"
                   >
                     <FiX size={20} />
                   </button>
                 </div>
 
-                <div className="flex border-b border-gray-200 dark:border-gray-700">
+                <div className="flex border-b border-gray-200">
                   {phaseContent &&
                     Object.keys(phaseContent).map((phase) => (
                       <button
                         key={phase}
-                        className={`px-4 py-2 text-sm font-medium ${
-                          activePhase === phase
-                            ? "border-b-2 border-blue-500 text-blue-600 dark:text-blue-400"
-                            : "text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
-                        }`}
+                        className={`px-4 py-2 text-sm font-medium ${activePhase === phase
+                            ? "border-b-2 border-blue-500 text-blue-600"
+                            : "text-gray-500 hover:text-gray-700"
+                          }`}
                         onClick={() => {
                           const event = new CustomEvent("setActivePhase", {
                             detail: phase,
@@ -571,15 +569,15 @@ export default function AIChat({
                 </div>
 
                 <div className="flex-1 p-4 overflow-auto">
-                  <pre className="whitespace-pre-wrap text-sm bg-gray-100 dark:bg-gray-900 p-4 rounded overflow-auto">
+                  <pre className="whitespace-pre-wrap text-sm bg-gray-100 p-4 rounded overflow-auto">
                     {getPhaseContent()}
                   </pre>
                 </div>
 
-                <div className="p-4 border-t border-gray-200 dark:border-gray-700 flex justify-end">
+                <div className="p-4 border-t border-gray-200 flex justify-end">
                   <button
                     onClick={onClose}
-                    className="px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 rounded hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                    className="px-4 py-2 bg-gray-200 text-gray-800 rounded hover:bg-gray-300 transition-colors"
                   >
                     Close
                   </button>
@@ -595,31 +593,29 @@ export default function AIChat({
 
   return (
     <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex-grow overflow-y-auto p-3 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-700 scrollbar-track-transparent max-h-[calc(100%-56px)]">
+      <div className="flex-grow overflow-y-auto p-3 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent max-h-[calc(100%-56px)]">
         {messages.map((message, index) => (
           <motion.div
             key={index}
-            className={`flex ${
-              message.role === "user" ? "justify-end" : "justify-start"
-            }`}
+            className={`flex ${message.role === "user" ? "justify-end" : "justify-start"
+              }`}
             initial="hidden"
             animate="visible"
             variants={messageVariants}
             layout
           >
             <div
-              className={`max-w-[90%] rounded-2xl px-3 py-2 ${
-                message.role === "user"
+              className={`max-w-[90%] rounded-2xl px-3 py-2 ${message.role === "user"
                   ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md"
-                  : "bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm"
-              }`}
+                  : "bg-white border border-gray-200 shadow-sm"
+                }`}
             >
               {message.role === "assistant" && (
-                <div className="flex items-center gap-1.5 mb-1.5 pb-1.5 border-b border-gray-100 dark:border-gray-800">
+                <div className="flex items-center gap-1.5 mb-1.5 pb-1.5 border-b border-gray-100">
                   <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
                     AI
                   </div>
-                  <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                  <span className="text-xs font-medium text-gray-500">
                     AI Assistant
                   </span>
                 </div>
@@ -634,11 +630,11 @@ export default function AIChat({
                   message.status && (
                     <div className="mt-2 text-xs">
                       <div className="flex items-center gap-2">
-                        <span className="text-gray-500 dark:text-gray-400">
+                        <span className="text-gray-500">
                           {message.status.message}
                         </span>
                         {message.status.status !== "error" && (
-                          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5">
+                          <div className="w-full bg-gray-200 rounded-full h-1.5">
                             <div
                               className="bg-blue-600 h-1.5 rounded-full"
                               style={{ width: `${message.status.progress}%` }}
@@ -657,11 +653,10 @@ export default function AIChat({
                       insertAIContent(message.content, message.isLoading)
                     }
                     disabled={message.isLoading}
-                    className={`flex items-center text-xs font-medium ${
-                      message.isLoading
-                        ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
-                        : "text-blue-500 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors"
-                    }`}
+                    className={`flex items-center text-xs font-medium ${message.isLoading
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-blue-500 hover:text-blue-700 transition-colors"
+                      }`}
                     whileHover={!message.isLoading ? { scale: 1.03 } : {}}
                     whileTap={!message.isLoading ? { scale: 0.97 } : {}}
                   >
@@ -673,11 +668,10 @@ export default function AIChat({
                       replaceCurrentSlide(message.content, message.isLoading)
                     }
                     disabled={message.isLoading}
-                    className={`flex items-center text-xs font-medium ${
-                      message.isLoading
-                        ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
-                        : "text-green-500 dark:text-green-400 hover:text-green-700 dark:hover:text-green-300 transition-colors"
-                    }`}
+                    className={`flex items-center text-xs font-medium ${message.isLoading
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-green-500 hover:text-green-700 transition-colors"
+                      }`}
                     whileHover={!message.isLoading ? { scale: 1.03 } : {}}
                     whileTap={!message.isLoading ? { scale: 0.97 } : {}}
                   >
@@ -689,11 +683,10 @@ export default function AIChat({
                       replaceAllSlides(message.content, message.isLoading)
                     }
                     disabled={message.isLoading}
-                    className={`flex items-center text-xs font-medium ${
-                      message.isLoading
-                        ? "text-gray-400 dark:text-gray-500 cursor-not-allowed"
-                        : "text-amber-500 dark:text-amber-400 hover:text-amber-700 dark:hover:text-amber-300 transition-colors"
-                    }`}
+                    className={`flex items-center text-xs font-medium ${message.isLoading
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-amber-500 hover:text-amber-700 transition-colors"
+                      }`}
                     whileHover={!message.isLoading ? { scale: 1.03 } : {}}
                     whileTap={!message.isLoading ? { scale: 0.97 } : {}}
                   >
@@ -711,7 +704,7 @@ export default function AIChat({
                           );
                           setIsModalOpen(true);
                         }}
-                        className="flex items-center text-xs font-medium text-purple-500 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors"
+                        className="flex items-center text-xs font-medium text-purple-500 hover:text-purple-700 transition-colors"
                         whileHover={{ scale: 1.03 }}
                         whileTap={{ scale: 0.97 }}
                       >
@@ -727,7 +720,7 @@ export default function AIChat({
                     <motion.button
                       onClick={handleRegenerate}
                       disabled={isLoading}
-                      className="flex items-center text-xs font-medium text-purple-500 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                      className="flex items-center text-xs font-medium text-purple-500 hover:text-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                       whileHover={{ scale: 1.03 }}
                       whileTap={{ scale: 0.97 }}
                     >
@@ -749,23 +742,23 @@ export default function AIChat({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
           >
-            <div className="max-w-[90%] rounded-2xl px-3 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 shadow-sm">
-              <div className="flex items-center gap-1.5 mb-1.5 pb-1.5 border-b border-gray-100 dark:border-gray-800">
+            <div className="max-w-[90%] rounded-2xl px-3 py-2 bg-white border border-gray-200 shadow-sm">
+              <div className="flex items-center gap-1.5 mb-1.5 pb-1.5 border-b border-gray-100">
                 <div className="w-5 h-5 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white text-xs font-bold">
                   AI
                 </div>
-                <span className="text-xs font-medium text-gray-500 dark:text-gray-400">
+                <span className="text-xs font-medium text-gray-500">
                   AI Assistant
                 </span>
               </div>
               <div className="flex space-x-2 items-center h-5">
-                <div className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 animate-bounce"></div>
+                <div className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce"></div>
                 <div
-                  className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 animate-bounce"
+                  className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce"
                   style={{ animationDelay: "0.2s" }}
                 ></div>
                 <div
-                  className="w-1.5 h-1.5 rounded-full bg-blue-400 dark:bg-blue-500 animate-bounce"
+                  className="w-1.5 h-1.5 rounded-full bg-blue-400 animate-bounce"
                   style={{ animationDelay: "0.4s" }}
                 ></div>
               </div>
@@ -778,7 +771,7 @@ export default function AIChat({
 
       <form
         onSubmit={handleSubmit}
-        className="p-2 border-t border-gray-200 dark:border-gray-700 shrink-0 bg-white dark:bg-gray-900"
+        className="p-2 border-t border-gray-200 shrink-0 bg-white"
       >
         <div className="flex gap-2 items-start">
           <div className="relative flex-grow">
@@ -788,7 +781,7 @@ export default function AIChat({
               onChange={adjustTextareaHeight}
               onKeyDown={handleKeyDown}
               placeholder="Ask AI for slide content... (Shift+Enter for new line)"
-              className="w-full p-2 pl-8 pr-3 text-sm border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white dark:bg-gray-800 shadow-sm resize-none min-h-[60px] max-h-[200px] overflow-y-auto"
+              className="w-full p-2 pl-8 pr-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm resize-none min-h-[60px] max-h-[200px] overflow-y-auto"
               style={{ height: "60px" }}
               rows={2}
             />

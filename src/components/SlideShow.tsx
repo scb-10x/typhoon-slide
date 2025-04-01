@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  FiArrowLeft, 
+import {
+  FiArrowLeft,
   FiArrowRight
 } from 'react-icons/fi';
 import MDXSlide from './MDXSlide';
@@ -48,23 +48,23 @@ export default function SlideShow({ slides, currentSlide, setCurrentSlide }: Sli
 
   // Determine if we're in fullscreen by checking container dimensions
   const [isWide, setIsWide] = useState(false);
-  
+
   useEffect(() => {
     const checkDimensions = () => {
       // Check if width is significantly larger than normal slide width
       setIsWide(window.innerWidth > 1000);
     };
-    
+
     checkDimensions();
     window.addEventListener('resize', checkDimensions);
     return () => window.removeEventListener('resize', checkDimensions);
   }, []);
 
   return (
-    <div className="relative w-full h-full bg-white dark:bg-gray-900 overflow-hidden flex items-center justify-center">
+    <div className="relative w-full h-full bg-white overflow-hidden flex items-center justify-center">
       {/* Slide Number Indicator */}
       <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="flex items-center gap-1 px-3 py-1 bg-gray-100/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-full shadow-sm text-xs font-medium text-gray-700 dark:text-gray-300">
+        <div className="flex items-center gap-1 px-3 py-1 bg-gray-100/70 backdrop-blur-sm rounded-full shadow-sm text-xs font-medium text-gray-700">
           <span className="text-[clamp(0.75rem,1.5vw,1rem)] font-medium">{currentSlide + 1}/{slides.length}</span>
         </div>
       </div>
@@ -75,14 +75,14 @@ export default function SlideShow({ slides, currentSlide, setCurrentSlide }: Sli
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
-          transition={{ 
+          transition={{
             type: "spring",
             stiffness: 300,
             damping: 30,
-            duration: 0.4 
+            duration: 0.4
           }}
           className={`slide-container h-full w-full flex items-center justify-center ${isWide ? 'scale-[0.95]' : ''}`}
-          style={{ 
+          style={{
             fontSize: `calc(1rem + ${Math.min(window.innerWidth / 1200, window.innerHeight / 800) * 0.5}rem)`
           }}
         >
@@ -96,17 +96,17 @@ export default function SlideShow({ slides, currentSlide, setCurrentSlide }: Sli
           whileTap={{ scale: 0.95 }}
           onClick={goToPrevSlide}
           disabled={currentSlide === 0}
-          className="p-[clamp(0.5rem,1vw,0.75rem)] rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 disabled:opacity-40 shadow-sm disabled:shadow-none"
+          className="p-[clamp(0.5rem,1vw,0.75rem)] rounded-full bg-white/80 backdrop-blur-sm text-gray-700 disabled:opacity-40 shadow-sm disabled:shadow-none"
           aria-label="Previous slide"
         >
           <FiArrowLeft className="w-[clamp(0.75rem,1.5vw,1.25rem)] h-[clamp(0.75rem,1.5vw,1.25rem)]" />
         </motion.button>
-        
+
         <motion.button
           whileTap={{ scale: 0.95 }}
           onClick={goToNextSlide}
           disabled={currentSlide === slides.length - 1}
-          className="p-[clamp(0.5rem,1vw,0.75rem)] rounded-full bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-700 dark:text-gray-300 disabled:opacity-40 shadow-sm disabled:shadow-none"
+          className="p-[clamp(0.5rem,1vw,0.75rem)] rounded-full bg-white/80 backdrop-blur-sm text-gray-700 disabled:opacity-40 shadow-sm disabled:shadow-none"
           aria-label="Next slide"
         >
           <FiArrowRight className="w-[clamp(0.75rem,1.5vw,1.25rem)] h-[clamp(0.75rem,1.5vw,1.25rem)]" />

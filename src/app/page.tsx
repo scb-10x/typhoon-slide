@@ -13,29 +13,29 @@ const BackgroundElements = () => (
   <div className="absolute inset-0 overflow-hidden -z-10">
     <div className="absolute top-0 left-0 w-full h-full bg-gradient-primary opacity-5"></div>
     <div className="bg-noise"></div>
-    
+
     {/* Gradient blobs */}
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0.6 }}
-      animate={{ 
+      animate={{
         opacity: [0.6, 0.8, 0.6],
         scale: [1, 1.05, 1],
       }}
       transition={{ duration: 8, repeat: Infinity, ease: 'easeInOut' }}
       className="absolute top-1/4 -left-24 w-96 h-96 rounded-full bg-indigo-500/20 blur-[80px]"
     />
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0.6 }}
-      animate={{ 
+      animate={{
         opacity: [0.6, 0.8, 0.6],
         scale: [1, 1.05, 1],
       }}
       transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut', delay: 1 }}
       className="absolute bottom-0 right-0 w-96 h-96 rounded-full bg-purple-500/20 blur-[80px]"
     />
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0.3 }}
-      animate={{ 
+      animate={{
         opacity: [0.3, 0.5, 0.3],
         scale: [1, 1.03, 1],
       }}
@@ -81,15 +81,15 @@ export default function HomePage() {
             <span className="text-xl font-semibold text-gradient-subtle">{t('app.title')}</span>
           </div>
           <div className="flex items-center gap-4">
-            <Link 
-              href="/methodology" 
+            <Link
+              href="/methodology"
               className="px-4 py-2 rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
             >
               {t('navigation.howItWorks')}
             </Link>
             <LanguageSwitcher />
-            <Link 
-              href="/app" 
+            <Link
+              href="/app"
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-primary text-white hover:shadow-md transition-all button-shine"
             >
               {t('app.openApp')} <FiArrowRight />
@@ -111,8 +111,8 @@ export default function HomePage() {
             >
               ✨ {t('hero.tagline')}
             </motion.div>
-            
-            <motion.h1 
+
+            <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.1 }}
@@ -120,7 +120,7 @@ export default function HomePage() {
             >
               {t('hero.title')}
             </motion.h1>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.2 }}
@@ -128,7 +128,7 @@ export default function HomePage() {
             >
               {t('hero.subtitle')}
             </motion.p>
-            
+
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -149,25 +149,25 @@ export default function HomePage() {
               </Link>
             </motion.div>
           </div>
-          
-          <motion.div 
+
+          <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
             className="relative max-w-5xl mx-auto rounded-2xl overflow-hidden shadow-xl border border-gray-100"
           >
             <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-purple-500/10 backdrop-blur-[2px] z-10 flex items-center justify-center">
-              <Link 
-                href="/app" 
+              <Link
+                href="/app"
                 className="px-8 py-3 rounded-lg bg-white text-indigo-600 text-lg font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 button-shine"
               >
                 {t('editor.tryTyphoonSlide')} <FiArrowRight />
               </Link>
             </div>
-            <Image 
-              src="/screenshot.png" 
-              alt="Typhoon Present Preview" 
-              width={1200} 
+            <Image
+              src="/screenshot.png"
+              alt="Typhoon Present Preview"
+              width={1200}
               height={675}
               className="w-full h-auto"
               priority
@@ -184,44 +184,44 @@ export default function HomePage() {
             <h2 className="text-3xl font-bold mb-4 text-gradient-subtle">{t('features.title')}</h2>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">{t('features.subtitle')}</p>
           </div>
-          
+
           <div className="grid md:grid-cols-3 gap-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5 }}
               viewport={{ once: true }}
               className="animate-float"
             >
-              <FeatureCard 
+              <FeatureCard
                 icon={<FiCheck size={24} />}
                 title={t('features.feature1.title')}
                 description={t('features.feature1.description')}
               />
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.2 }}
               viewport={{ once: true }}
               className="animate-float-reverse"
             >
-              <FeatureCard 
+              <FeatureCard
                 icon={<FiCheck size={24} />}
                 title={t('features.feature2.title')}
                 description={t('features.feature2.description')}
               />
             </motion.div>
-            
-            <motion.div 
+
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.4 }}
               viewport={{ once: true }}
               className="animate-float"
             >
-              <FeatureCard 
+              <FeatureCard
                 icon={<FiCheck size={24} />}
                 title={t('features.feature3.title')}
                 description={t('features.feature3.description')}
@@ -244,8 +244,8 @@ export default function HomePage() {
           >
             <h2 className="text-4xl font-bold mb-6 text-white">{t('callToAction.title')}</h2>
             <p className="text-xl mb-8 text-indigo-100 max-w-2xl mx-auto">{t('callToAction.subtitle')}</p>
-            <Link 
-              href="/app" 
+            <Link
+              href="/app"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-white text-indigo-600 text-lg font-medium shadow-lg hover:shadow-xl transition-all button-shine"
             >
               {t('callToAction.startCreating')} <FiArrowRight />
@@ -253,23 +253,6 @@ export default function HomePage() {
           </motion.div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-12">
-        <div className="container mx-auto px-4">
-          <div className="text-center">
-            <p className="text-gray-400 mb-4">{t('footer.copyright')}</p>
-            <a 
-              href="https://opentyphoon.ai" 
-              target="_blank" 
-              rel="noopener noreferrer" 
-              className="text-gray-400 hover:text-white transition-colors inline-flex items-center gap-2"
-            >
-              {t('footer.builtWith')} <span className="text-gradient">Typhoon AI</span>
-            </a>
-          </div>
-        </div>
-      </footer>
     </div>
   );
 }

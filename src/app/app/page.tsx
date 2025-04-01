@@ -50,10 +50,10 @@ export default function Home() {
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const { t } = useTranslation();
-  
+
   // Get MDX components outside the callback
   const mdxComponents = useMDXComponents();
-  
+
   // Load saved markdown from localStorage on component mount
   useEffect(() => {
     const savedMarkdown = localStorage.getItem('markdown-content');
@@ -81,14 +81,14 @@ export default function Home() {
     // Add console log to debug
     console.log("Received content for insertion:", content);
     console.log("Current markdown before insertion:", markdown);
-    
+
     // Create the new markdown content
     const separator = markdown.trim().endsWith('---') ? '\n\n' : '\n\n---\n\n';
     const newMarkdown = markdown + separator + content;
-    
+
     // Log the new markdown before updating state
     console.log("New markdown after insertion:", newMarkdown);
-    
+
     // Update the state with the new content
     handleMarkdownChange(newMarkdown); // Use handleMarkdownChange to ensure localStorage is updated
   };
@@ -103,20 +103,20 @@ export default function Home() {
   // Function to replace only the current slide with new content
   const handleReplaceThisSlide = (content: string) => {
     console.log("Replacing only current slide with new content");
-    
+
     if (slides.length === 0) {
       // If there are no slides, just set the content as the first slide
       handleMarkdownChange(content);
       return;
     }
-    
+
     // Create a new array of slides with the current slide replaced
     const newSlides = [...slides];
     newSlides[currentSlide] = content;
-    
+
     // Join the slides back together with separators
     const newMarkdown = newSlides.join('\n\n---\n\n');
-    
+
     // Update the markdown
     handleMarkdownChange(newMarkdown);
   };
@@ -133,12 +133,12 @@ export default function Home() {
 
   // Get current markdown content for context passing to AIChat
   const getCurrentSlideContext = () => {
-    if(slides.length === 0) {
+    if (slides.length === 0) {
       return "No slides created yet.";
     }
     const currentSlideContent = slides[currentSlide].trim();
     console.log('currentSlideContent', slides, currentSlide, currentSlideContent)
-    
+
     return `Current slide content:\n${currentSlideContent || "Empty slide"}`;
   };
 
@@ -152,7 +152,7 @@ export default function Home() {
 
       try {
         // Split the markdown by slide separators
-        
+
 
         // Compile each slide with MDX
         const compiledSlidePromises = slides.map(async (slideContent) => {
@@ -160,7 +160,7 @@ export default function Home() {
             // Compile the MDX with our custom components
             const { content } = await compileMDX({
               source: slideContent,
-              options: { 
+              options: {
                 parseFrontmatter: true,
                 mdxOptions: {
                   development: process.env.NODE_ENV === 'development'
@@ -168,7 +168,7 @@ export default function Home() {
               },
               components: mdxComponents // Components are already defined at the top level
             });
-            
+
             return content;
           } catch (error) {
             console.error('Error compiling MDX:', error);
@@ -189,30 +189,30 @@ export default function Home() {
     // Debounce the rendering to avoid excessive compilations
     const timeoutId = setTimeout(renderMarkdown, 500);
     return () => clearTimeout(timeoutId);
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [markdown]);
 
   const downloadMdxFile = () => {
     try {
       // Create a blob from the markdown content
       const blob = new Blob([markdown], { type: 'text/markdown' });
-      
+
       // Create a URL for the blob
       const url = URL.createObjectURL(blob);
-      
+
       // Create a temporary anchor element
       const a = document.createElement('a');
       a.href = url;
       a.download = 'typhoon-slide-presentation.mdx';
-      
+
       // Programmatically click the anchor to trigger the download
       document.body.appendChild(a);
       a.click();
-      
+
       // Clean up
       document.body.removeChild(a);
       URL.revokeObjectURL(url);
-      
+
       // Show toast notification if available
       console.log('MDX file downloaded');
     } catch (err) {
@@ -221,10 +221,10 @@ export default function Home() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen h-screen bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-950 dark:to-gray-900 overflow-hidden">
+    <div className="flex flex-col min-h-screen h-screen bg-gradient-to-br from-gray-50 to-gray-100 overflow-hidden">
       {/* Header - hidden in fullscreen mode */}
       {!isFullScreen && (
-        <header className="backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-b border-gray-200 dark:border-gray-800 px-4 py-3 sticky top-0 z-30 flex-shrink-0">
+        <header className="backdrop-blur-md bg-white/80 border-b border-gray-200 px-4 py-3 sticky top-0 z-30 flex-shrink-0">
           <div className="max-w-full mx-auto flex items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
               <Image
@@ -234,28 +234,28 @@ export default function Home() {
                 height={28}
                 className="h-7 w-7"
               />
-              <h1 className="text-lg font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
+              <h1 className="text-lg font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
                 {t('app.title')}
               </h1>
             </Link>
-            
+
             {/* Right side with controls */}
             <div className="flex items-center gap-3">
               <button
                 onClick={downloadMdxFile}
-                className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-1.5"
                 aria-label="Download MDX file"
                 title="Download MDX file"
               >
-                <FiDownload className="w-4 h-4" /> 
+                <FiDownload className="w-4 h-4" />
                 <span>{t('editor.download')}</span>
               </button>
               <button
                 onClick={toggleEditor}
-                className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all duration-200 flex items-center gap-1.5"
+                className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-1.5"
                 aria-label="Edit markdown"
               >
-                <FiEdit className="w-4 h-4" /> 
+                <FiEdit className="w-4 h-4" />
                 <span>{t('editor.editSlides')}</span>
               </button>
               <LanguageSwitcher />
@@ -270,39 +270,39 @@ export default function Home() {
         <div className={`flex-grow flex flex-col ${isFullScreen ? 'w-full h-full' : 'w-full md:w-3/4'}`}>
           {!isFullScreen && (
             <div className="flex items-center gap-2 px-1 mb-2 flex-shrink-0">
-              <h2 className="text-base font-bold text-gray-800 dark:text-gray-200">{t('editor.presentationPreview')}</h2>
-              <div className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 dark:bg-blue-900 dark:text-blue-300 font-medium">
+              <h2 className="text-base font-bold text-gray-800">{t('editor.presentationPreview')}</h2>
+              <div className="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 font-medium">
                 {compiledSlides.length} {t('editor.slides')}
               </div>
             </div>
           )}
-          
+
           <div className={`relative w-full ${isFullScreen ? 'h-screen' : 'flex-grow'} flex items-center justify-center`}>
-            <div className={`${isFullScreen ? 'w-screen h-screen absolute inset-0' : 'w-full h-full relative rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-blue-50 to-purple-50 dark:from-gray-800 dark:to-gray-900 p-0.5'}`}>
+            <div className={`${isFullScreen ? 'w-screen h-screen absolute inset-0' : 'w-full h-full relative rounded-xl overflow-hidden shadow-xl bg-gradient-to-br from-blue-50 to-purple-50 p-0.5'}`}>
               {!isFullScreen && (
-                <div className="absolute top-0 left-0 right-0 h-7 bg-gradient-to-r from-gray-100 to-gray-50 dark:from-gray-800 dark:to-gray-900 border-b border-gray-200 dark:border-gray-700 rounded-t-xl flex items-center justify-between px-3">
+                <div className="absolute top-0 left-0 right-0 h-7 bg-gradient-to-r from-gray-100 to-gray-50 border-b border-gray-200 rounded-t-xl flex items-center justify-between px-3">
                   <div className="flex gap-1">
-                    <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
-                    <div className="w-2 h-2 rounded-full bg-gray-300 dark:bg-gray-600"></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-300"></div>
+                    <div className="w-2 h-2 rounded-full bg-gray-300"></div>
                   </div>
-                  <button 
+                  <button
                     onClick={toggleFullScreen}
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors focus:outline-none"
+                    className="text-gray-500 hover:text-gray-700 transition-colors focus:outline-none"
                     aria-label="Toggle fullscreen"
                   >
                     <FiMaximize className="w-3.5 h-3.5" />
                   </button>
                 </div>
               )}
-              
+
               <div className={`${isFullScreen ? 'w-full h-full' : 'w-full pt-7'}`} style={isFullScreen ? { height: '100vh', width: '100vw' } : { aspectRatio: '16/9' }}>
-                <div className={`${isFullScreen ? 'h-screen w-screen' : 'h-full'} bg-white dark:bg-gray-800 ${isFullScreen ? '' : 'rounded-lg overflow-hidden border border-gray-200 dark:border-gray-700 shadow-inner'}`}>
+                <div className={`${isFullScreen ? 'h-screen w-screen' : 'h-full'} bg-white ${isFullScreen ? '' : 'rounded-lg overflow-hidden border border-gray-200 shadow-inner'}`}>
                   {compiledSlides.length > 0 ? (
                     <div className={`relative ${isFullScreen ? 'h-screen w-screen' : 'h-full'}`}>
                       <SlideShow slides={compiledSlides} setCurrentSlide={(e) => setCurrentSlide(e)} currentSlide={currentSlide} />
                       {isFullScreen && (
-                        <button 
+                        <button
                           onClick={toggleFullScreen}
                           className="absolute bottom-4 right-4 p-2 bg-gray-800/70 text-white rounded-full hover:bg-gray-700/70 focus:outline-none z-50"
                           aria-label="Exit fullscreen"
@@ -313,8 +313,8 @@ export default function Home() {
                     </div>
                   ) : (
                     <div className="h-full flex flex-col items-center justify-center text-gray-500 gap-2 p-4">
-                      <div className="w-12 h-12 rounded-full bg-gray-100 dark:bg-gray-700 flex items-center justify-center">
-                        <FiLayout className="w-6 h-6 text-gray-400 dark:text-gray-500" />
+                      <div className="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center">
+                        <FiLayout className="w-6 h-6 text-gray-400" />
                       </div>
                       <p className="text-center text-sm max-w-md">
                         {t('editor.emptySlideMessage')}
@@ -336,13 +336,13 @@ export default function Home() {
         {/* Chat Section - hidden in fullscreen mode */}
         {!isFullScreen && (
           <div className="flex-none flex flex-col w-full md:w-1/4">
-            <div className="flex-grow flex flex-col rounded-xl overflow-hidden shadow-xl border border-gray-200 dark:border-gray-700 h-[250px] md:h-full">
-              <div className="bg-gradient-to-r from-blue-100 to-blue-50 dark:from-gray-800 dark:to-gray-850 p-2 flex justify-between items-center flex-shrink-0">
+            <div className="flex-grow flex flex-col rounded-xl overflow-hidden shadow-xl border border-gray-200 h-[250px] md:h-full">
+              <div className="bg-gradient-to-r from-blue-100 to-blue-50 p-2 flex justify-between items-center flex-shrink-0">
                 <div className="flex items-center gap-2">
                   <div className="w-6 h-6 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-bold text-xs">
                     AI
                   </div>
-                  <span className="font-medium text-xs text-gray-800 dark:text-gray-200">{t('editor.makeSlides')}</span>
+                  <span className="font-medium text-xs text-gray-800">{t('editor.makeSlides')}</span>
                 </div>
                 <button
                   onClick={toggleEditor}
@@ -351,13 +351,13 @@ export default function Home() {
                   <FiEdit className="w-3 h-3" /> {t('editor.editSlides')}
                 </button>
               </div>
-              
-              <div className="flex-1 bg-white dark:bg-gray-900 overflow-hidden min-h-0">
-                <AIChat 
-                  onInsertMarkdown={handleAIContentInsert} 
+
+              <div className="flex-1 bg-white overflow-hidden min-h-0">
+                <AIChat
+                  onInsertMarkdown={handleAIContentInsert}
                   onReplaceSlide={handleReplaceThisSlide}
                   onReplaceAllSlides={handleReplaceAllSlides}
-                  currentSlideContext={getCurrentSlideContext()} 
+                  currentSlideContext={getCurrentSlideContext()}
                 />
               </div>
             </div>
@@ -365,31 +365,18 @@ export default function Home() {
         )}
       </main>
 
-      {/* Footer - hidden in fullscreen mode */}
-      {!isFullScreen && (
-        <footer className="backdrop-blur-md bg-white/80 dark:bg-gray-900/80 border-t border-gray-200 dark:border-gray-800 py-2 text-center text-xs text-gray-500 flex-shrink-0 mt-auto">
-          <div className="max-w-full mx-auto px-4">
-            <div className="flex justify-center items-center">
-              <a href="https://opentyphoon.ai" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition-colors">
-                {t('footer.builtWith')}
-              </a>
-            </div>
-          </div>
-        </footer>
-      )}
-
       {/* Editor Overlay - shown when isEditorOpen is true */}
       {isEditorOpen && (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 flex items-center justify-center p-2"
         >
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl w-full max-w-6xl h-[90vh] relative border border-gray-200 dark:border-gray-700 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-6xl h-[90vh] relative border border-gray-200 overflow-hidden">
             <div className="absolute right-3 top-3 z-50">
-              <button 
+              <button
                 onClick={toggleEditor}
-                className="bg-gray-200 dark:bg-gray-700 rounded-full p-1.5 hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                className="bg-gray-200 rounded-full p-1.5 hover:bg-gray-300 transition-colors"
                 aria-label="Close editor"
               >
                 <FiX className="w-4 h-4" />
@@ -400,9 +387,9 @@ export default function Home() {
                 <span className="font-medium">{t('editor.editingMarkdown')}</span> - {t('editor.changesAutosaved')}
               </div>
               <div className="flex-grow overflow-hidden">
-                <MarkdownEditor 
+                <MarkdownEditor
                   value={markdown}
-                  onChange={handleMarkdownChange} 
+                  onChange={handleMarkdownChange}
                 />
               </div>
             </div>

@@ -55,10 +55,6 @@
     "emptySlideMessage": "Your slides will appear here. Start by writing in the editor or asking the AI to create content for you.",
     "openEditor": "Open Editor"
   },
-  "footer": {
-    "builtWith": "Built with",
-    "copyright": "© 2025 Typhoon Slide."
-  },
   "callToAction": {
     "title": "Create Engaging Slides in Minutes",
     "subtitle": "Typhoon Slide helps you create professional presentations faster than ever before.",
@@ -99,4 +95,4 @@
     },
     "technicalDetails": "Technical Details:"
   }
-} 
+}
