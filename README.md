@@ -1,10 +1,32 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Typhoon MDX Slide Creator
 
-## Getting Started
+## Introduction
+
+[Typhoon MDX Slide Creator](https://slides.apps.opentyphoon.ai) is a web application that enables users to create beautiful, content-rich presentations using MDX syntax. It combines the simplicity of Markdown with the power of AI-assisted content generation to help users create professional presentations quickly and easily.
+
+This project is part of [Typhoon Application Week](https://apps.opentyphoon.ai), showcasing the capabilities of the [Typhoon platform](https://opentyphoon.ai). Please note that this application is not maintained for production use and is not production-ready. Use at your own risk.
+
+## Highlighted Features + Typhoon Integration
+
+- **AI-Powered Content Generation**: Typhoon helps generate slide content based on your topic or outline, creating professionally structured presentations with appropriate headings, bullet points, and transitions.
+
+- **Intelligent Content Enhancement**: Existing slide content can be improved by Typhoon, which can add examples, clarify points, or restructure information for better flow and impact.
+
+- **Smart Formatting Suggestions**: Typhoon analyzes your content and suggests optimal formatting, including slide breaks, heading levels, and emphasis points to create a well-paced presentation.
+
+- **Multi-slide Generation**: Generate entire presentation outlines with Typhoon's ability to create coherent multi-slide sequences that build on each other logically.
+
+- **Real-time Presentation Preview**: As you edit or generate content with Typhoon, see your presentation come to life in the interactive preview pane, allowing for immediate feedback and adjustments.
+
+## Getting Started (Local Development)
+
+### Prerequisites
+
+- Node.js 18 or later
+- npm, yarn, or pnpm
+- Typhoon API key
 
 ### Setting up your Typhoon API Key
-
-This application uses the Typhoon API to generate MDX slide content. You'll need to set up your API key:
 
 1. Create a `.env.local` file in the root directory
 2. Add your Typhoon API key:
@@ -13,53 +35,34 @@ This application uses the Typhoon API to generate MDX slide content. You'll need
    ```
 3. You can get an API key from [Typhoon's platform](https://opentyphoon.ai)
 
-⚠️ **Important**: Never commit your `.env.local` file to version control.
+### Installation
 
-### Running the Development Server
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/yourusername/typhoon-mdx-slide-creator.git
+   cd typhoon-mdx-slide-creator
+   ```
 
-First, run the development server:
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+3. Run the development server:
+   ```bash
+   npm run dev
+   ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+4. Open [http://localhost:3000](http://localhost:3000) with your browser to see the application.
 
-## Features
+## License
 
-- Create slides using MDX syntax
-- AI-powered content generation using Typhoon
-- Live preview of slides
-- Simple, intuitive interface
-- Markdown editor with syntax highlighting
-- Dark mode support
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT) - see the LICENSE file for details.
 
-## How to Use
+## Connect With Us
 
-1. Write your slide content using Markdown syntax
-2. Separate slides with `---`
-3. Use the AI chat to generate slide content based on your prompts
-4. Preview your slides in real-time
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-When deploying, make sure to set the `TYPHOON_API_KEY` environment variable in your Vercel project settings.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Website: [Typhoon](https://opentyphoon.ai)
+- GitHub: [SCB 10X](https://github.com/scb-10x)
+- Hugging Face: [SCB 10X](https://huggingface.co/scb10x)
+- Discord: [Join our community](https://discord.com/invite/9F6nrFXyNt)
+- X (formerly Twitter): [Typhoon](https://x.com/opentyphoon)
