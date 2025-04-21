@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   authors: [{ name: "Typhoon Team", url: "https://opentyphoon.ai" }],
   creator: "Typhoon",
   publisher: "Typhoon",
-  metadataBase: new URL("https://opentyphoon.ai"),
+  metadataBase: new URL("https://slides.apps.opentyphoon.ai"),
   alternates: {
     canonical: "/",
   },
@@ -35,11 +35,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Typhoon Slide | Create AI-Powered Presentation Decks",
     description: "Create professional presentations in minutes with AI assistance. Typhoon Slide showcases what's possible with the OpenTyphoon AI platform.",
-    url: "https://opentyphoon.ai",
+    url: "https://slides.apps.opentyphoon.ai",
     siteName: "Typhoon Slide",
     images: [
       {
-        url: "/images/og-image.jpg",
+        url: "/images/og.jpg",
         width: 1200,
         height: 630,
         alt: "Typhoon Slide - AI-Powered Presentation Creator",
@@ -52,7 +52,7 @@ export const metadata: Metadata = {
     card: "summary_large_image",
     title: "Typhoon Slide | Create AI-Powered Presentation Decks",
     description: "Create professional presentations in minutes with AI assistance. A showcase of Typhoon's capabilities.",
-    images: ["/images/og-image.jpg"],
+    images: ["/images/og.jpg"],
     creator: "@opentyphoon",
     site: "@opentyphoon",
   },
@@ -88,7 +88,7 @@ export default function RootLayout({
               "screenshot": "/screenshot.png",
               "softwareHelp": {
                 "@type": "CreativeWork",
-                "url": "https://opentyphoon.ai"
+                "url": "https://slides.apps.opentyphoon.ai"
               }
             }
           `}
