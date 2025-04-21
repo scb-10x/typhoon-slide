@@ -3,4 +3,4 @@ User-agent: *
 Allow: /
 
 # Sitemap location
-Sitemap: https://opentyphoon.ai/sitemap.xml 
+Sitemap: https://slides.apps.opentyphoon.ai/sitemap.xml 
