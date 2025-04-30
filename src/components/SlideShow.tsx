@@ -41,10 +41,10 @@ export default function SlideShow({ slides, currentSlide, setCurrentSlide }: Sli
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentSlide, goToNextSlide, goToPrevSlide]);
 
-  // Reset to first slide when slides change completely
+  // Reset to first slide when slides array reference changes (e.g., after editing)
   useEffect(() => {
     setCurrentSlide(0);
-  }, [slides.length, setCurrentSlide]);
+  }, [slides]);
 
   // Determine if we're in fullscreen by checking container dimensions
   const [isWide, setIsWide] = useState(false);
