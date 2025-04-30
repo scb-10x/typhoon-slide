@@ -16,17 +16,17 @@ interface SlideShowProps {
 
 export default function SlideShow({ slides, currentSlide, setCurrentSlide }: SlideShowProps) {
 
-  const goToNextSlide = () => {
+  const goToNextSlide = React.useCallback(() => {
     if (currentSlide < slides.length - 1) {
       setCurrentSlide(currentSlide + 1);
     }
-  };
+  }, [currentSlide, slides.length, setCurrentSlide]);
 
-  const goToPrevSlide = () => {
+  const goToPrevSlide = React.useCallback(() => {
     if (currentSlide > 0) {
       setCurrentSlide(currentSlide - 1);
     }
-  };
+  }, [currentSlide, setCurrentSlide]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -39,12 +39,12 @@ export default function SlideShow({ slides, currentSlide, setCurrentSlide }: Sli
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [currentSlide]);
+  }, [currentSlide, goToNextSlide, goToPrevSlide]);
 
   // Reset to first slide when slides change completely
   useEffect(() => {
     setCurrentSlide(0);
-  }, [slides.length]);
+  }, [slides.length, setCurrentSlide]);
 
   // Determine if we're in fullscreen by checking container dimensions
   const [isWide, setIsWide] = useState(false);

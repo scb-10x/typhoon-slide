@@ -55,7 +55,7 @@ interface FeatureCardProps {
   id?: string;
 }
 
-const FeatureCard = ({ icon, title, description, id }: FeatureCardProps) => (
+const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
   <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start">
     <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
       {icon}

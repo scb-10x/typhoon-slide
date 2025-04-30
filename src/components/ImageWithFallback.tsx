@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
+import Image from 'next/image';
 
 interface ImageWithFallbackProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   src: string;
@@ -38,22 +39,22 @@ export default function ImageWithFallback({
 
   if (error) {
     return (
-      <div 
-        style={placeholderStyle} 
+      <div
+        style={placeholderStyle}
         className={className}
         role="img"
         aria-label={`Image placeholder: ${alt}`}
       >
         <div className="text-center p-4">
-          <svg 
-            xmlns="http://www.w3.org/2000/svg" 
-            width="24" 
-            height="24" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            stroke="currentColor" 
-            strokeWidth="2" 
-            strokeLinecap="round" 
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
             strokeLinejoin="round"
             className="mx-auto mb-2"
           >
@@ -68,7 +69,7 @@ export default function ImageWithFallback({
   }
 
   return (
-    <img
+    <Image
       src={src}
       alt={alt}
       className={className}

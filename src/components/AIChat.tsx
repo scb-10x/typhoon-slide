@@ -591,25 +591,6 @@ export default function AIChat({
     []
   );
 
-  // Function to start a new chat
-  const handleNewChat = () => {
-    // Clear all messages except the initial greeting
-    setMessages([
-      {
-        role: "assistant",
-        content:
-          "Hello! I'm your AI assistant. I can help you create slide content. What would you like help with?",
-      },
-    ]);
-    setLastUserPrompt("");
-    setInputValue("");
-
-    // Reset textarea height
-    if (textareaRef.current) {
-      textareaRef.current.style.height = "60px";
-    }
-  };
-
   return (
     <div className="flex flex-col h-full overflow-hidden rounded-xl bg-white shadow-sm border border-gray-200" id="ai-chat-container">
       <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-purple-50">
