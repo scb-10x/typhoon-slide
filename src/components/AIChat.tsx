@@ -553,8 +553,8 @@ export default function AIChat({
                       <button
                         key={phase}
                         className={`px-4 py-2 text-sm font-medium ${activePhase === phase
-                            ? "border-b-2 border-blue-500 text-blue-600"
-                            : "text-gray-500 hover:text-gray-700"
+                          ? "border-b-2 border-blue-500 text-blue-600"
+                          : "text-gray-500 hover:text-gray-700"
                           }`}
                         onClick={() => {
                           const event = new CustomEvent("setActivePhase", {
@@ -591,9 +591,48 @@ export default function AIChat({
     []
   );
 
+  // Function to start a new chat
+  const handleNewChat = () => {
+    // Clear all messages except the initial greeting
+    setMessages([
+      {
+        role: "assistant",
+        content:
+          "Hello! I'm your AI assistant. I can help you create slide content. What would you like help with?",
+      },
+    ]);
+    setLastUserPrompt("");
+    setInputValue("");
+
+    // Reset textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "60px";
+    }
+  };
+
   return (
-    <div className="flex flex-col h-full overflow-hidden">
-      <div className="flex-grow overflow-y-auto p-3 space-y-2 scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-transparent max-h-[calc(100%-56px)]">
+    <div className="flex flex-col h-full overflow-hidden rounded-xl bg-white shadow-sm border border-gray-200" id="ai-chat-container">
+      <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-purple-50">
+        <div className="flex items-center gap-2">
+          <div className="flex-shrink-0 h-6 w-6 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600">
+            <FiMessageSquare className="h-3.5 w-3.5" />
+          </div>
+          <h3 className="font-semibold text-md">AI Assistant</h3>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={handleRegenerate}
+            className="p-1.5 rounded-md text-gray-500 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+            aria-label="Regenerate"
+            title="Regenerate"
+            id="regenerate-button"
+          >
+            <FiRefreshCw className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 overflow-y-auto px-4" id="chat-messages-container">
         {messages.map((message, index) => (
           <motion.div
             key={index}
@@ -606,8 +645,8 @@ export default function AIChat({
           >
             <div
               className={`max-w-[90%] rounded-2xl px-3 py-2 ${message.role === "user"
-                  ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md"
-                  : "bg-white border border-gray-200 shadow-sm"
+                ? "bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-md"
+                : "bg-white border border-gray-200 shadow-sm"
                 }`}
             >
               {message.role === "assistant" && (
@@ -654,8 +693,8 @@ export default function AIChat({
                     }
                     disabled={message.isLoading}
                     className={`flex items-center text-xs font-medium ${message.isLoading
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "text-blue-500 hover:text-blue-700 transition-colors"
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-blue-500 hover:text-blue-700 transition-colors"
                       }`}
                     whileHover={!message.isLoading ? { scale: 1.03 } : {}}
                     whileTap={!message.isLoading ? { scale: 0.97 } : {}}
@@ -669,8 +708,8 @@ export default function AIChat({
                     }
                     disabled={message.isLoading}
                     className={`flex items-center text-xs font-medium ${message.isLoading
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "text-green-500 hover:text-green-700 transition-colors"
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-green-500 hover:text-green-700 transition-colors"
                       }`}
                     whileHover={!message.isLoading ? { scale: 1.03 } : {}}
                     whileTap={!message.isLoading ? { scale: 0.97 } : {}}
@@ -684,8 +723,8 @@ export default function AIChat({
                     }
                     disabled={message.isLoading}
                     className={`flex items-center text-xs font-medium ${message.isLoading
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "text-amber-500 hover:text-amber-700 transition-colors"
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-amber-500 hover:text-amber-700 transition-colors"
                       }`}
                     whileHover={!message.isLoading ? { scale: 1.03 } : {}}
                     whileTap={!message.isLoading ? { scale: 0.97 } : {}}
@@ -714,22 +753,6 @@ export default function AIChat({
                           : "View Generation Phases"}
                       </motion.button>
                     )}
-
-                  {/* Only show the regenerate button for the last AI message */}
-                  {index === messages.length - 1 && lastUserPrompt && (
-                    <motion.button
-                      onClick={handleRegenerate}
-                      disabled={isLoading}
-                      className="flex items-center text-xs font-medium text-purple-500 hover:text-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                      whileHover={{ scale: 1.03 }}
-                      whileTap={{ scale: 0.97 }}
-                    >
-                      <FiRefreshCw
-                        className={`mr-1.5 ${isLoading ? "animate-spin" : ""}`}
-                      />{" "}
-                      Regenerate
-                    </motion.button>
-                  )}
                 </div>
               )}
             </div>
@@ -771,32 +794,38 @@ export default function AIChat({
 
       <form
         onSubmit={handleSubmit}
-        className="p-2 border-t border-gray-200 shrink-0 bg-white"
+        className="p-4 border-t border-gray-200 flex gap-2 items-end"
+        id="ai-chat-form"
       >
-        <div className="flex gap-2 items-start">
-          <div className="relative flex-grow">
-            <textarea
-              ref={textareaRef}
-              value={inputValue}
-              onChange={adjustTextareaHeight}
-              onKeyDown={handleKeyDown}
-              placeholder="Ask AI for slide content... (Shift+Enter for new line)"
-              className="w-full p-2 pl-8 pr-3 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white shadow-sm resize-none min-h-[60px] max-h-[200px] overflow-y-auto"
-              style={{ height: "60px" }}
-              rows={2}
-            />
-            <FiMessageSquare className="absolute left-2.5 top-[calc(30px-0.5rem)] transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-          </div>
-          <motion.button
-            type="submit"
-            disabled={isLoading || !inputValue.trim()}
-            className="p-2 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white rounded-full shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex-shrink-0 self-end"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-          >
-            <FiSend className="w-4 h-4" />
-          </motion.button>
+        <div className="flex-1 relative">
+          <textarea
+            ref={textareaRef}
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+              adjustTextareaHeight(e);
+            }}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask for help with slide content..."
+            className="w-full resize-none rounded-lg border border-gray-300 focus:border-indigo-500 focus:ring-1 focus:ring-indigo-200 px-3 py-2 text-sm min-h-[60px] max-h-[200px] placeholder:text-gray-400"
+            id="ai-chat-input"
+          />
         </div>
+        <button
+          type="submit"
+          disabled={!inputValue.trim() || isLoading}
+          className={`rounded-full p-2.5 flex-shrink-0 ${isLoading || !inputValue.trim()
+            ? "bg-gray-200 text-gray-400"
+            : "bg-indigo-600 text-white hover:bg-indigo-700"
+            } transition-colors`}
+          id="ai-chat-submit-button"
+        >
+          {isLoading ? (
+            <FiRefreshCw className="w-5 h-5 animate-spin" />
+          ) : (
+            <FiSend className="w-5 h-5" />
+          )}
+        </button>
       </form>
 
       {/* Phase Content Modal */}

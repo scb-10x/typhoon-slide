@@ -7,6 +7,8 @@ import { FiArrowRight, FiCheck } from 'react-icons/fi';
 import { useTranslation } from "@/lib/i18n-provider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { ReactNode } from 'react';
+import { FaGithub } from 'react-icons/fa';
+import { useState, useEffect } from 'react';
 
 // Animated background elements
 const BackgroundElements = () => (
@@ -50,9 +52,10 @@ interface FeatureCardProps {
   icon: ReactNode;
   title: string;
   description: string;
+  id?: string;
 }
 
-const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
+const FeatureCard = ({ icon, title, description, id }: FeatureCardProps) => (
   <div className="p-6 rounded-2xl bg-white/80 backdrop-blur-sm border border-gray-100 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-start">
     <div className="w-12 h-12 flex items-center justify-center rounded-full bg-indigo-100 text-indigo-600 mb-4">
       {icon}
@@ -64,6 +67,23 @@ const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
 
 export default function HomePage() {
   const { t } = useTranslation();
+  const [showGithubLink, setShowGithubLink] = useState(false);
+
+  // Check if current date is after release date for GitHub button
+  useEffect(() => {
+    const checkDate = () => {
+      const releaseDate = new Date('2025-05-08T17:00:01Z');
+      setShowGithubLink(new Date() > releaseDate);
+    };
+
+    // Check initially
+    checkDate();
+
+    // Check every minute
+    const interval = setInterval(checkDate, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white text-gray-900">
@@ -88,9 +108,22 @@ export default function HomePage() {
               {t('navigation.howItWorks')}
             </Link>
             <LanguageSwitcher />
+            {showGithubLink && (
+              <Link
+                href="https://github.com/scb-10x/typhoon-mdx-slide-creator"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                id="github-source-link"
+                aria-label="View source code on GitHub"
+              >
+                <FaGithub className="w-5 h-5" />
+              </Link>
+            )}
             <Link
               href="/app"
               className="flex items-center gap-2 px-4 py-2 rounded-lg bg-gradient-primary text-white hover:shadow-md transition-all button-shine"
+              id="header-open-app-button"
             >
               {t('app.openApp')} <FiArrowRight />
             </Link>
@@ -138,12 +171,14 @@ export default function HomePage() {
               <Link
                 href="/app"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 text-lg font-medium text-white bg-gradient-primary rounded-lg hover:shadow-md transition-all button-shine"
+                id="hero-get-started-button"
               >
                 {t('hero.getStarted')} <FiArrowRight />
               </Link>
               <Link
                 href="/methodology"
                 className="inline-flex items-center justify-center gap-2 px-6 py-3 text-lg font-medium text-gray-700 bg-white border border-gray-200 rounded-lg hover:border-indigo-300 transition-all"
+                id="hero-how-it-works-button"
               >
                 {t('navigation.howItWorks')}
               </Link>
@@ -160,6 +195,7 @@ export default function HomePage() {
               <Link
                 href="/app"
                 className="px-8 py-3 rounded-lg bg-white text-indigo-600 text-lg font-medium shadow-md hover:shadow-lg transition-all flex items-center justify-center gap-2 button-shine"
+                id="preview-try-typhoon-button"
               >
                 {t('editor.tryTyphoonSlide')} <FiArrowRight />
               </Link>
@@ -197,6 +233,7 @@ export default function HomePage() {
                 icon={<FiCheck size={24} />}
                 title={t('features.feature1.title')}
                 description={t('features.feature1.description')}
+                id="feature-card-1"
               />
             </motion.div>
 
@@ -211,6 +248,7 @@ export default function HomePage() {
                 icon={<FiCheck size={24} />}
                 title={t('features.feature2.title')}
                 description={t('features.feature2.description')}
+                id="feature-card-2"
               />
             </motion.div>
 
@@ -225,6 +263,7 @@ export default function HomePage() {
                 icon={<FiCheck size={24} />}
                 title={t('features.feature3.title')}
                 description={t('features.feature3.description')}
+                id="feature-card-3"
               />
             </motion.div>
           </div>
@@ -247,8 +286,9 @@ export default function HomePage() {
             <Link
               href="/app"
               className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-white text-indigo-600 text-lg font-medium shadow-lg hover:shadow-xl transition-all button-shine"
+              id="cta-open-app-button"
             >
-              {t('callToAction.startCreating')} <FiArrowRight />
+              {t('callToAction.buttonText')} <FiArrowRight />
             </Link>
           </motion.div>
         </div>

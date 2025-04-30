@@ -61,10 +61,10 @@ export default function SlideShow({ slides, currentSlide, setCurrentSlide }: Sli
   }, []);
 
   return (
-    <div className="relative w-full h-full bg-white overflow-hidden flex items-center justify-center">
+    <div className="relative w-full h-full bg-white overflow-hidden flex items-center justify-center" id="slide-show-container">
       {/* Slide Number Indicator */}
       <div className="absolute top-2 left-1/2 transform -translate-x-1/2 z-10">
-        <div className="flex items-center gap-1 px-3 py-1 bg-gray-100/70 backdrop-blur-sm rounded-full shadow-sm text-xs font-medium text-gray-700">
+        <div className="flex items-center gap-1 px-3 py-1 bg-gray-100/70 backdrop-blur-sm rounded-full shadow-sm text-xs font-medium text-gray-700" id="slide-counter">
           <span className="text-[clamp(0.75rem,1.5vw,1rem)] font-medium">{currentSlide + 1}/{slides.length}</span>
         </div>
       </div>
@@ -98,6 +98,7 @@ export default function SlideShow({ slides, currentSlide, setCurrentSlide }: Sli
           disabled={currentSlide === 0}
           className="p-[clamp(0.5rem,1vw,0.75rem)] rounded-full bg-white/80 backdrop-blur-sm text-gray-700 disabled:opacity-40 shadow-sm disabled:shadow-none"
           aria-label="Previous slide"
+          id="slide-prev-button"
         >
           <FiArrowLeft className="w-[clamp(0.75rem,1.5vw,1.25rem)] h-[clamp(0.75rem,1.5vw,1.25rem)]" />
         </motion.button>
@@ -108,6 +109,7 @@ export default function SlideShow({ slides, currentSlide, setCurrentSlide }: Sli
           disabled={currentSlide === slides.length - 1}
           className="p-[clamp(0.5rem,1vw,0.75rem)] rounded-full bg-white/80 backdrop-blur-sm text-gray-700 disabled:opacity-40 shadow-sm disabled:shadow-none"
           aria-label="Next slide"
+          id="slide-next-button"
         >
           <FiArrowRight className="w-[clamp(0.75rem,1.5vw,1.25rem)] h-[clamp(0.75rem,1.5vw,1.25rem)]" />
         </motion.button>

@@ -59,7 +59,7 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
   };
 
   return (
-    <div className="flex flex-col h-full rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm">
+    <div className="flex flex-col h-full rounded-xl border border-gray-200 overflow-hidden bg-white shadow-sm" id="markdown-editor-container">
       <div className="flex items-center justify-between border-b border-gray-200 px-4 py-2 bg-gray-50">
         <div className="font-medium text-sm text-gray-600">Markdown</div>
         <div className="flex items-center space-x-2">
@@ -68,6 +68,7 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
             className="p-1 rounded-md text-gray-500 hover:text-gray-700 hover:bg-gray-100"
             title="Download MDX file"
             onClick={downloadMdxFile}
+            id="editor-download-button"
           >
             <ArrowDownTrayIcon className="w-4 h-4" />
           </motion.button>
@@ -79,13 +80,14 @@ export default function MarkdownEditor({ value, onChange }: MarkdownEditorProps)
               navigator.clipboard.writeText(value);
               showToast('Copied to clipboard!');
             }}
+            id="editor-copy-button"
           >
             <ClipboardIcon className="w-4 h-4" />
           </motion.button>
         </div>
       </div>
 
-      <div className="flex-grow overflow-auto">
+      <div className="flex-grow overflow-auto" id="editor-content-area">
         <CodeMirror
           value={value}
           onChange={handleChange}

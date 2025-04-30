@@ -53,7 +53,8 @@
     "tryTyphoonSlide": "Try Typhoon Slide Creator",
     "makeSlides": "Create professional slides with AI",
     "emptySlideMessage": "Your AI-generated slides will appear here. Start by writing in the editor or asking Typhoon AI to create presentation content for you.",
-    "openEditor": "Open Slide Editor"
+    "openEditor": "Open Slide Editor",
+    "fullScreen": "Full Screen"
   },
   "callToAction": {
     "title": "Transform Ideas Into Presentations Instantly",

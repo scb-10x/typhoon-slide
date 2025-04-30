@@ -49,6 +49,7 @@ export default function LanguageSwitcher() {
         className="flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200"
         onClick={() => setIsOpen(!isOpen)}
         aria-label={t('navigation.language')}
+        id="language-switcher-button"
       >
         <FiGlobe className="w-4 h-4" />
         <span className="hidden sm:inline-block">{languages.find(l => l.code === currentLang)?.name}</span>

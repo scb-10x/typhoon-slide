@@ -117,24 +117,24 @@ export default function RootLayout({
             <footer className="bg-gray-50 border-t border-gray-200 py-8">
               <div className="container mx-auto px-4 flex flex-col md:flex-row justify-between items-center text-sm text-gray-600">
                 <div className="flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-6 mb-4 md:mb-0">
-                  <Link href="https://opentyphoon.ai" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-800 font-medium transition-colors">
+                  <Link href="https://opentyphoon.ai" target="_blank" rel="noopener noreferrer" className="text-purple-600 hover:text-purple-800 font-medium transition-colors" id="footer-typhoon-link">
                     #BuiltWithTyphoon
                   </Link>
-                  <Link href="https://opentyphoon.ai/tac" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition-colors">
+                  <Link href="https://opentyphoon.ai/tac" target="_blank" rel="noopener noreferrer" className="hover:text-gray-900 transition-colors" id="footer-terms-link">
                     Terms and Conditions
                   </Link>
                 </div>
                 <div className="flex items-center space-x-5">
-                  <Link href="https://github.com/scb-10x" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-500 hover:text-gray-800 transition-colors">
+                  <Link href="https://github.com/scb-10x" target="_blank" rel="noopener noreferrer" aria-label="GitHub" className="text-gray-500 hover:text-gray-800 transition-colors" id="footer-github-link">
                     <FaGithub size={20} />
                   </Link>
-                  <Link href="https://discord.gg/9F6nrFXyNt" target="_blank" rel="noopener noreferrer" aria-label="Discord" className="text-gray-500 hover:text-gray-800 transition-colors">
+                  <Link href="https://discord.gg/9F6nrFXyNt" target="_blank" rel="noopener noreferrer" aria-label="Discord" className="text-gray-500 hover:text-gray-800 transition-colors" id="footer-discord-link">
                     <FaDiscord size={20} />
                   </Link>
-                  <Link href="https://huggingface.co/scb10x" target="_blank" rel="noopener noreferrer" aria-label="Hugging Face" className="text-gray-500 hover:text-gray-800 transition-colors">
+                  <Link href="https://huggingface.co/scb10x" target="_blank" rel="noopener noreferrer" aria-label="Hugging Face" className="text-gray-500 hover:text-gray-800 transition-colors" id="footer-huggingface-link">
                     <SiHuggingface size={20} />
                   </Link>
-                  <Link href="https://x.com/opentyphoon" target="_blank" rel="noopener noreferrer" aria-label="X (formerly Twitter)" className="text-gray-500 hover:text-gray-800 transition-colors">
+                  <Link href="https://x.com/opentyphoon" target="_blank" rel="noopener noreferrer" aria-label="X (formerly Twitter)" className="text-gray-500 hover:text-gray-800 transition-colors" id="footer-twitter-link">
                     <FaXTwitter size={20} />
                   </Link>
                 </div>

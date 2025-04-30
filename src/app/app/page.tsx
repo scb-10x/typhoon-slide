@@ -10,6 +10,7 @@ import { motion } from 'framer-motion';
 import { useMDXComponents } from '@/lib/mdx-components';
 import { useTranslation } from "@/lib/i18n-provider";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { FaGithub } from 'react-icons/fa';
 
 const MarkdownEditor = dynamic(() => import('@/components/MarkdownEditor'), { ssr: false });
 const AIChat = dynamic(() => import('@/components/AIChat'), { ssr: false });
@@ -49,10 +50,27 @@ export default function Home() {
   const [compiledSlides, setCompiledSlides] = useState<React.ReactNode[]>([]);
   const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [showGithubLink, setShowGithubLink] = useState(false);
   const { t } = useTranslation();
 
   // Get MDX components outside the callback
   const mdxComponents = useMDXComponents();
+
+  // Check if current date is after release date for GitHub button
+  useEffect(() => {
+    const checkDate = () => {
+      const releaseDate = new Date('2025-05-08T17:00:01Z');
+      setShowGithubLink(new Date() > releaseDate);
+    };
+
+    // Check initially
+    checkDate();
+
+    // Check every minute
+    const interval = setInterval(checkDate, 60000);
+
+    return () => clearInterval(interval);
+  }, []);
 
   // Load saved markdown from localStorage on component mount
   useEffect(() => {
@@ -246,17 +264,57 @@ export default function Home() {
                 className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-1.5"
                 aria-label="Download MDX file"
                 title="Download MDX file"
+                id="download-mdx-button"
               >
                 <FiDownload className="w-4 h-4" />
                 <span>{t('editor.download')}</span>
               </button>
+              {showGithubLink && (
+                <Link
+                  href="https://github.com/scb-10x/typhoon-mdx-slide-creator"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-1.5"
+                  id="app-github-source-link"
+                  aria-label="View source code on GitHub"
+                  title="View source code on GitHub"
+                >
+                  <FaGithub className="w-4 h-4" />
+                </Link>
+              )}
               <button
                 onClick={toggleEditor}
                 className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-1.5"
-                aria-label="Edit markdown"
+                aria-label={isEditorOpen ? "Close editor" : "Open editor"}
+                title={isEditorOpen ? "Close editor" : "Open editor"}
+                id="toggle-editor-button"
               >
-                <FiEdit className="w-4 h-4" />
-                <span>{t('editor.editSlides')}</span>
+                {isEditorOpen ? (
+                  <>
+                    <FiX className="w-4 h-4" /> {t('editor.closeEditor')}
+                  </>
+                ) : (
+                  <>
+                    <FiEdit className="w-4 h-4" /> {t('editor.openEditor')}
+                  </>
+                )}
+              </button>
+              <button
+                onClick={toggleFullScreen}
+                className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-1.5"
+                aria-label={isFullScreen ? "Exit fullscreen" : "Enter fullscreen"}
+                title={isFullScreen ? "Exit fullscreen" : "Enter fullscreen"}
+                id="toggle-fullscreen-button"
+              >
+                {isFullScreen ? (
+                  <>
+                    <FiMinimize className="w-4 h-4" /> {t('editor.exitFullscreen')}
+                  </>
+                ) : (
+                  <>
+                    <FiMaximize className="w-4 h-4" /> {t('editor.fullScreen')}
+                  </>
+                )}
               </button>
               <LanguageSwitcher />
             </div>
