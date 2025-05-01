@@ -47,7 +47,7 @@ Start creating your slides now!
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [compiledSlides, setCompiledSlides] = useState<React.ReactNode[]>([]);
-  const [isEditorOpen, setIsEditorOpen] = useState(true);
+  const [isEditorOpen, setIsEditorOpen] = useState(false);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showGithubLink, setShowGithubLink] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
