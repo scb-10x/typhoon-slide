@@ -60,52 +60,13 @@ interface AIChatProps {
   currentSlideContext?: string;
 }
 
-// Quick Action buttons component
-const QuickActions = ({ onActionClick }: { onActionClick: (text: string) => void }) => {
-  const [showGuide, setShowGuide] = useState(false);
-  
-  const exampleActions = [
-    {
-      icon: <FiFileText />,
-      label: "Create Slide",
-      example: "Create slide for developers, 5 pages, React hooks best practices",
-      colorClass: "bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100"
-    },
-    {
-      icon: <FiEdit2 />,
-      label: "Edit Slide",
-      example: "Make this more concise with bullet points",
-      colorClass: "bg-green-50 text-green-700 border-green-100 hover:bg-green-100"
-    },
-    {
-      icon: <FiHelpCircle />,
-      label: "Get Help",
-      example: "How do I create engaging presentation for executives?",
-      colorClass: "bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-100"
-    }
-  ];
-
+// Feature Guide component for the top of the chat
+const FeatureGuide = ({ showGuide, setShowGuide }: { showGuide: boolean, setShowGuide: (show: boolean) => void }) => {
   return (
-    <div className="border-b border-gray-200 bg-gray-50 rounded-t-xl">
-      <div className="p-3">
-        <p className="text-xs text-gray-500 mb-2">Quick Actions:</p>
-        <div className="flex flex-wrap gap-2">
-          {exampleActions.map((action, index) => (
-            <button
-              key={index}
-              onClick={() => onActionClick(action.example)}
-              className={`text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 border transition-colors ${action.colorClass}`}
-            >
-              {action.icon}
-              <span>{action.label}</span>
-            </button>
-          ))}
-        </div>
-      </div>
-      
+    <div className="border-b border-gray-200 bg-gray-50">
       <button 
         onClick={() => setShowGuide(!showGuide)}
-        className="w-full px-3 py-1.5 text-xs text-gray-500 flex items-center justify-center hover:bg-gray-100 transition-colors border-t border-gray-200"
+        className="w-full px-3 py-1.5 text-xs text-gray-500 flex items-center justify-center hover:bg-gray-100 transition-colors"
       >
         {showGuide ? <FiChevronUp className="mr-1" /> : <FiChevronDown className="mr-1" />}
         {showGuide ? "Hide Guide" : "Show Feature Guide"}
@@ -135,6 +96,48 @@ const QuickActions = ({ onActionClick }: { onActionClick: (text: string) => void
   );
 };
 
+// Quick Action buttons component (simplified - just the buttons)
+const QuickActions = ({ onActionClick }: { onActionClick: (text: string) => void }) => {
+  const exampleActions = [
+    {
+      icon: <FiFileText />,
+      label: "Create Slide",
+      example: "Create slide for developers, 5 pages, React hooks best practices",
+      colorClass: "bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100"
+    },
+    {
+      icon: <FiEdit2 />,
+      label: "Edit Slide",
+      example: "Make this more concise with bullet points",
+      colorClass: "bg-green-50 text-green-700 border-green-100 hover:bg-green-100"
+    },
+    {
+      icon: <FiHelpCircle />,
+      label: "Get Help",
+      example: "How do I create engaging presentation for executives?",
+      colorClass: "bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-100"
+    }
+  ];
+
+  return (
+    <div className="p-3 border-t border-gray-200 bg-gray-50">
+      <p className="text-xs text-gray-500 mb-2">Quick Actions:</p>
+      <div className="flex flex-wrap gap-2">
+        {exampleActions.map((action, index) => (
+          <button
+            key={index}
+            onClick={() => onActionClick(action.example)}
+            className={`text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 border transition-colors ${action.colorClass}`}
+          >
+            {action.icon}
+            <span>{action.label}</span>
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+};
+
 export default function AIChat({
   onInsertMarkdown,
   onReplaceSlide,
@@ -157,6 +160,9 @@ export default function AIChat({
   const [lastUserPrompt, setLastUserPrompt] = useState<string>("");
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Feature guide state
+  const [showGuide, setShowGuide] = useState(false);
 
   // Modal state for viewing phase content
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -711,8 +717,8 @@ export default function AIChat({
         </div>
       </div>
 
-      {/* Add Quick Actions Component */}
-      <QuickActions onActionClick={handleQuickActionClick} />
+      {/* Feature Guide at top */}
+      <FeatureGuide showGuide={showGuide} setShowGuide={setShowGuide} />
 
       <div className="flex-1 overflow-y-auto px-4" id="chat-messages-container">
         {messages.map((message, index) => (
@@ -873,6 +879,9 @@ export default function AIChat({
 
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Quick Actions above the form */}
+      <QuickActions onActionClick={handleQuickActionClick} />
 
       <form
         onSubmit={handleSubmit}

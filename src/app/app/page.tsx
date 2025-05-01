@@ -46,11 +46,12 @@ Start creating your slides now!
 
 export default function Home() {
   const [currentSlide, setCurrentSlide] = useState(0);
-  const [markdown, setMarkdown] = useState('');
   const [compiledSlides, setCompiledSlides] = useState<React.ReactNode[]>([]);
-  const [isEditorOpen, setIsEditorOpen] = useState(false);
+  const [isEditorOpen, setIsEditorOpen] = useState(true);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const [showGithubLink, setShowGithubLink] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [markdownValue, setMarkdownValue] = useState<string>(defaultMarkdown);
   const { t } = useTranslation();
 
   // Get MDX components outside the callback
@@ -76,21 +77,21 @@ export default function Home() {
   useEffect(() => {
     const savedMarkdown = localStorage.getItem('markdown-content');
     if (savedMarkdown) {
-      setMarkdown(savedMarkdown);
+      setMarkdownValue(savedMarkdown);
     } else {
-      setMarkdown(defaultMarkdown);
+      setMarkdownValue(defaultMarkdown);
     }
   }, []);
 
   const slides = useMemo(() => {
-    return markdown
+    return markdownValue
       .split('---')
       .map(slide => slide.trim())
       .filter(Boolean);
-  }, [markdown]);
+  }, [markdownValue]);
 
   const handleMarkdownChange = (value: string) => {
-    setMarkdown(value);
+    setMarkdownValue(value);
     // Save to localStorage whenever markdown changes
     localStorage.setItem('markdown-content', value);
   };
@@ -98,11 +99,11 @@ export default function Home() {
   const handleAIContentInsert = (content: string) => {
     // Add console log to debug
     console.log("Received content for insertion:", content);
-    console.log("Current markdown before insertion:", markdown);
+    console.log("Current markdown before insertion:", markdownValue);
 
     // Create the new markdown content
-    const separator = markdown.trim().endsWith('---') ? '\n\n' : '\n\n---\n\n';
-    const newMarkdown = markdown + separator + content;
+    const separator = markdownValue.trim().endsWith('---') ? '\n\n' : '\n\n---\n\n';
+    const newMarkdown = markdownValue + separator + content;
 
     // Log the new markdown before updating state
     console.log("New markdown after insertion:", newMarkdown);
@@ -141,7 +142,7 @@ export default function Home() {
 
   const toggleEditor = () => {
     console.log("Toggling editor. Current state:", isEditorOpen);
-    console.log("Current markdown content:", markdown.substring(0, 100) + "...");
+    console.log("Current markdown content:", markdownValue.substring(0, 100) + "...");
     setIsEditorOpen(!isEditorOpen);
   };
 
@@ -163,7 +164,7 @@ export default function Home() {
   // This function processes the markdown into slides for the preview
   useEffect(() => {
     const renderMarkdown = async () => {
-      if (!markdown.trim()) {
+      if (!markdownValue.trim()) {
         setCompiledSlides([]);
         return;
       }
@@ -208,12 +209,12 @@ export default function Home() {
     const timeoutId = setTimeout(renderMarkdown, 500);
     return () => clearTimeout(timeoutId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [markdown]);
+  }, [markdownValue]);
 
   const downloadMdxFile = () => {
     try {
       // Create a blob from the markdown content
-      const blob = new Blob([markdown], { type: 'text/markdown' });
+      const blob = new Blob([markdownValue], { type: 'text/markdown' });
 
       // Create a URL for the blob
       const url = URL.createObjectURL(blob);
@@ -258,8 +259,8 @@ export default function Home() {
               <span className="px-1.5 py-0.5 text-xs font-bold bg-amber-100 text-amber-700 rounded-md">DEMO</span>
             </Link>
 
-            {/* Right side with controls */}
-            <div className="flex items-center gap-3">
+            {/* Right side with controls - desktop view */}
+            <div className="hidden md:flex items-center gap-3">
               <button
                 onClick={downloadMdxFile}
                 className="px-3 py-1.5 rounded-full text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-1.5"
@@ -319,7 +320,84 @@ export default function Home() {
               </button>
               <LanguageSwitcher />
             </div>
+            
+            {/* Mobile menu button */}
+            <div className="md:hidden flex items-center">
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className="p-2 rounded-lg text-gray-600 hover:bg-gray-100 transition-all duration-200"
+                aria-label="Toggle mobile menu"
+              >
+                {mobileMenuOpen ? (
+                  <FiX className="w-5 h-5" />
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                  </svg>
+                )}
+              </button>
+            </div>
           </div>
+          
+          {/* Mobile menu dropdown */}
+          {mobileMenuOpen && (
+            <div className="md:hidden pt-2 pb-3 border-t border-gray-100">
+              <div className="flex flex-col space-y-2">
+                <button
+                  onClick={downloadMdxFile}
+                  className="px-4 py-2 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-2"
+                  id="download-mdx-button-mobile"
+                >
+                  <FiDownload className="w-4 h-4" />
+                  <span>{t('editor.download')}</span>
+                </button>
+                {showGithubLink && (
+                  <Link
+                    href="https://github.com/scb-10x/typhoon-mdx-slide-creator"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="px-4 py-2 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-2"
+                    id="app-github-source-link-mobile"
+                    onClick={() => setMobileMenuOpen(false)}
+                  >
+                    <FaGithub className="w-4 h-4" />
+                    <span>GitHub</span>
+                  </Link>
+                )}
+                <button
+                  onClick={() => {
+                    toggleEditor();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="px-4 py-2 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-2"
+                  id="toggle-editor-button-mobile"
+                >
+                  {isEditorOpen ? (
+                    <>
+                      <FiX className="w-4 h-4" /> {t('editor.closeEditor')}
+                    </>
+                  ) : (
+                    <>
+                      <FiEdit className="w-4 h-4" /> {t('editor.openEditor')}
+                    </>
+                  )}
+                </button>
+                <button
+                  onClick={() => {
+                    toggleFullScreen();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="px-4 py-2 text-left text-sm font-medium text-gray-600 hover:bg-gray-100 transition-all duration-200 flex items-center gap-2"
+                  id="toggle-fullscreen-button-mobile"
+                >
+                  <FiMaximize className="w-4 h-4" /> {t('editor.fullScreen')}
+                </button>
+                <div className="px-4 py-2">
+                  <LanguageSwitcher />
+                </div>
+              </div>
+            </div>
+          )}
         </header>
       )}
 
@@ -454,7 +532,7 @@ export default function Home() {
               </div>
               <div className="flex-grow overflow-hidden">
                 <MarkdownEditor
-                  value={markdown}
+                  value={markdownValue}
                   onChange={handleMarkdownChange}
                 />
               </div>

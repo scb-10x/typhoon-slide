@@ -68,6 +68,7 @@ const FeatureCard = ({ icon, title, description }: FeatureCardProps) => (
 export default function HomePage() {
   const { t } = useTranslation();
   const [showGithubLink, setShowGithubLink] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Check if current date is after release date for GitHub button
   useEffect(() => {
@@ -101,7 +102,9 @@ export default function HomePage() {
             <span className="text-xl font-semibold text-gradient-subtle">{t('app.title')}</span>
             <span className="px-1.5 py-0.5 text-xs font-bold bg-amber-100 text-amber-700 rounded-md">DEMO</span>
           </div>
-          <div className="flex items-center gap-4">
+          
+          {/* Desktop navigation */}
+          <div className="hidden md:flex items-center gap-4">
             <Link
               href="/methodology"
               className="px-4 py-2 rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
@@ -129,7 +132,65 @@ export default function HomePage() {
               {t('app.openApp')} <FiArrowRight />
             </Link>
           </div>
+          
+          {/* Mobile menu button */}
+          <div className="md:hidden flex items-center">
+            <button 
+              className="p-2 rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+            >
+              {mobileMenuOpen ? (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              ) : (
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
+        
+        {/* Mobile menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-b border-gray-200 py-3 px-4">
+            <div className="flex flex-col space-y-3">
+              <Link
+                href="/methodology"
+                className="px-4 py-2 rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('navigation.howItWorks')}
+              </Link>
+              <div className="px-4 py-2">
+                <LanguageSwitcher />
+              </div>
+              {showGithubLink && (
+                <Link
+                  href="https://github.com/scb-10x/typhoon-mdx-slide-creator"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 px-4 py-2 rounded-lg text-gray-600 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                  id="github-source-link-mobile"
+                  aria-label="View source code on GitHub"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <FaGithub className="w-5 h-5" /> GitHub
+                </Link>
+              )}
+              <Link
+                href="/app"
+                className="flex items-center justify-center gap-2 px-4 py-2 rounded-lg bg-gradient-primary text-white hover:shadow-md transition-all button-shine"
+                id="header-open-app-button-mobile"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {t('app.openApp')} <FiArrowRight />
+              </Link>
+            </div>
+          </div>
+        )}
       </header>
 
       {/* Hero Section */}
@@ -268,30 +329,6 @@ export default function HomePage() {
               />
             </motion.div>
           </div>
-        </div>
-      </section>
-
-      {/* Call to Action */}
-      <section className="py-24 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-primary opacity-95"></div>
-        <div className="bg-noise"></div>
-        <div className="container mx-auto px-4 text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true }}
-          >
-            <h2 className="text-4xl font-bold mb-6 text-white">{t('callToAction.title')}</h2>
-            <p className="text-xl mb-8 text-indigo-100 max-w-2xl mx-auto">{t('callToAction.subtitle')}</p>
-            <Link
-              href="/app"
-              className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-white text-indigo-600 text-lg font-medium shadow-lg hover:shadow-xl transition-all button-shine"
-              id="cta-open-app-button"
-            >
-              {t('callToAction.buttonText')} <FiArrowRight />
-            </Link>
-          </motion.div>
         </div>
       </section>
     </div>
