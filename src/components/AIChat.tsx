@@ -528,10 +528,6 @@ export default function AIChat({
     [onReplaceAllSlides]
   );
 
-  // Scroll to bottom of messages when new messages are added
-  useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  }, [messages]);
 
   // Reset textarea height when input is cleared
   useEffect(() => {
