@@ -99,6 +99,7 @@ export default function HomePage() {
               className="h-8 w-8"
             />
             <span className="text-xl font-semibold text-gradient-subtle">{t('app.title')}</span>
+            <span className="px-1.5 py-0.5 text-xs font-bold bg-amber-100 text-amber-700 rounded-md">DEMO</span>
           </div>
           <div className="flex items-center gap-4">
             <Link

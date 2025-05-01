@@ -255,6 +255,7 @@ export default function Home() {
               <h1 className="text-lg font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-600 to-purple-600">
                 {t('app.title')}
               </h1>
+              <span className="px-1.5 py-0.5 text-xs font-bold bg-amber-100 text-amber-700 rounded-md">DEMO</span>
             </Link>
 
             {/* Right side with controls */}
