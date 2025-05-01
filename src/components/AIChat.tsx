@@ -15,6 +15,11 @@ import {
   FiEdit,
   FiX,
   FiEye,
+  FiHelpCircle,
+  FiFileText,
+  FiEdit2,
+  FiChevronDown,
+  FiChevronUp,
 } from "react-icons/fi";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -55,6 +60,81 @@ interface AIChatProps {
   currentSlideContext?: string;
 }
 
+// Quick Action buttons component
+const QuickActions = ({ onActionClick }: { onActionClick: (text: string) => void }) => {
+  const [showGuide, setShowGuide] = useState(false);
+  
+  const exampleActions = [
+    {
+      icon: <FiFileText />,
+      label: "Create Slide",
+      example: "Create slide for developers, 5 pages, React hooks best practices",
+      colorClass: "bg-blue-50 text-blue-700 border-blue-100 hover:bg-blue-100"
+    },
+    {
+      icon: <FiEdit2 />,
+      label: "Edit Slide",
+      example: "Make this more concise with bullet points",
+      colorClass: "bg-green-50 text-green-700 border-green-100 hover:bg-green-100"
+    },
+    {
+      icon: <FiHelpCircle />,
+      label: "Get Help",
+      example: "How do I create engaging presentation for executives?",
+      colorClass: "bg-purple-50 text-purple-700 border-purple-100 hover:bg-purple-100"
+    }
+  ];
+
+  return (
+    <div className="border-b border-gray-200 bg-gray-50 rounded-t-xl">
+      <div className="p-3">
+        <p className="text-xs text-gray-500 mb-2">Quick Actions:</p>
+        <div className="flex flex-wrap gap-2">
+          {exampleActions.map((action, index) => (
+            <button
+              key={index}
+              onClick={() => onActionClick(action.example)}
+              className={`text-xs px-3 py-1.5 rounded-lg flex items-center gap-1.5 border transition-colors ${action.colorClass}`}
+            >
+              {action.icon}
+              <span>{action.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      
+      <button 
+        onClick={() => setShowGuide(!showGuide)}
+        className="w-full px-3 py-1.5 text-xs text-gray-500 flex items-center justify-center hover:bg-gray-100 transition-colors border-t border-gray-200"
+      >
+        {showGuide ? <FiChevronUp className="mr-1" /> : <FiChevronDown className="mr-1" />}
+        {showGuide ? "Hide Guide" : "Show Feature Guide"}
+      </button>
+      
+      {showGuide && (
+        <div className="p-3 bg-white border-t border-gray-200 text-xs space-y-2">
+          <div>
+            <h4 className="font-medium text-gray-900">How to use this AI Assistant:</h4>
+            <ul className="ml-5 mt-1 list-disc text-gray-600 space-y-1">
+              <li><span className="text-blue-600 font-medium">Create slide for [audience], [pages], [content]</span> - Generate slides for specific audiences with page limit</li>
+              <li><span className="text-green-600 font-medium">Edit instructions</span> - Request changes like &quot;make it shorter&quot; or &quot;add bullet points&quot;</li>
+              <li><span className="text-purple-600 font-medium">Ask questions</span> - Get help with slide creation techniques or best practices</li>
+            </ul>
+          </div>
+          <div>
+            <h4 className="font-medium text-gray-900">Tips:</h4>
+            <ul className="ml-5 mt-1 list-disc text-gray-600 space-y-1">
+              <li>Be specific about your target audience for better results</li>
+              <li>Use action buttons below AI responses to insert or replace content</li>
+              <li>Click the regenerate button to try again with the same prompt</li>
+            </ul>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
 export default function AIChat({
   onInsertMarkdown,
   onReplaceSlide,
@@ -65,7 +145,11 @@ export default function AIChat({
     {
       role: "assistant",
       content:
-        "Hello! I'm your AI assistant. I can help you create slide content. What would you like help with?",
+        "Hello! I'm your AI assistant. I can help you create slide content. Here's how to use this chat:\n\n" +
+        "1. **Create slide for [audience], [pages], [content]** - Generate slides for specific audiences with page limit\n" +
+        "2. **Edit this slide** - Just tell me what to edit (e.g., 'make it shorter', 'add bullet points')\n" +
+        "3. **Ask questions** - Get help with slides or how to create specific types of slides\n\n" +
+        "What would you like help with today?",
     },
   ]);
   const [inputValue, setInputValue] = useState("");
@@ -591,6 +675,20 @@ export default function AIChat({
     []
   );
 
+  // Handle quick action button click
+  const handleQuickActionClick = useCallback((text: string) => {
+    setInputValue(text);
+    
+    // Adjust textarea height
+    if (textareaRef.current) {
+      textareaRef.current.style.height = "auto";
+      textareaRef.current.style.height = `${Math.min(textareaRef.current.scrollHeight, 200)}px`;
+    }
+    
+    // Focus the textarea
+    textareaRef.current?.focus();
+  }, []);
+
   return (
     <div className="flex flex-col h-full overflow-hidden rounded-xl bg-white shadow-sm border border-gray-200" id="ai-chat-container">
       <div className="p-4 border-b border-gray-200 flex items-center justify-between bg-gradient-to-r from-indigo-50 to-purple-50">
@@ -612,6 +710,9 @@ export default function AIChat({
           </button>
         </div>
       </div>
+
+      {/* Add Quick Actions Component */}
+      <QuickActions onActionClick={handleQuickActionClick} />
 
       <div className="flex-1 overflow-y-auto px-4" id="chat-messages-container">
         {messages.map((message, index) => (

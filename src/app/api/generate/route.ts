@@ -5,9 +5,27 @@ import { generateText } from "ai";
 import { typhoon } from "@/lib/typhoon";
 import { TYPHOON_MODEL } from "@/const";
 
+const extractCodeBlocks = (text: string): string[] => {
+  const codeBlocks: string[] = [];
+
+  // Match all code blocks: ```language\ncode\n```
+  const codeBlockRegex = /```(?:[a-zA-Z0-9]+)?\n([\s\S]*?)```/g;
+
+  let match;
+  while ((match = codeBlockRegex.exec(text)) !== null) {
+    // match[1] contains the actual code content
+    codeBlocks.push(match[1].trim());
+  }
+
+  return codeBlocks;
+}
 
 const cleanedCodeBlock = (text: string) => {
-    // This will match any opening code fence with optional language specification
+  const codeBlock = extractCodeBlocks(text)
+  if (codeBlock.length > 0) {
+    return codeBlock[0]
+  }
+  // This will match any opening code fence with optional language specification
   // For example: ```javascript, ```python, ```mdx, etc.
   text = text.replace(/^```(?:[a-zA-Z0-9]+)?/gm, '');
   
@@ -388,7 +406,7 @@ async function generateSlide(slidePlan: SlidePlan, slideNumber: number, userProm
     temperature: 0.7,
     maxTokens: 8192,
   });
-  
+  console.log('contentResult.text', contentResult.text)
   return cleanedCodeBlock(contentResult.text);
 }
 
@@ -453,7 +471,6 @@ If certain parameters aren't explicitly stated, use reasonable defaults based on
 ### User Prompt:
 "${userPrompt}"
 `;
-
   const extractionResult = await generateText({
     model: typhoon(TYPHOON_MODEL),
     messages: [
@@ -535,7 +552,6 @@ async function runFullSlideGeneration(
     temperature: 0.7,
     maxTokens: 8192,
   });
-  
   // Store the planning phase content
   const currentStatusAfterPlanning = statusStore.get(generationId);
   if (currentStatusAfterPlanning) {
@@ -584,7 +600,6 @@ async function runFullSlideGeneration(
   // Step 2: Generate each individual slide (now in two phases)
   console.log("Step 2: Generating individual slides (two-phase process)...");
   const slidePromises: Promise<string>[] = [];
-  console.log('slidePlan', slidePlan)
   
   for (let i = 1; i <= slidePlan.totalSlides; i++) {
     slidePromises.push(generateSlide(slidePlan, i, userPrompt, slideConstraint));
@@ -920,15 +935,15 @@ export async function GET(request: Request) {
   }
   
   // Log status details including phaseContent
-  console.log(`GET status for id ${id}:`, {
-    id: status.id,
-    status: status.status,
-    progress: status.progress,
-    hasPhaseContent: !!status.phaseContent,
-    phaseContent: status.phaseContent,
-    phaseContentKeys: status.phaseContent ? Object.keys(status.phaseContent) : [],
-  });
-  console.log('status', status)
+  // console.log(`GET status for id ${id}:`, {
+  //   id: status.id,
+  //   status: status.status,
+  //   progress: status.progress,
+  //   hasPhaseContent: !!status.phaseContent,
+  //   phaseContent: status.phaseContent,
+  //   phaseContentKeys: status.phaseContent ? Object.keys(status.phaseContent) : [],
+  // });
+  // console.log('status', status)
   
   return NextResponse.json(status);
 }
